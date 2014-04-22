@@ -1,0 +1,20 @@
+Rinside
+	http://dirk.eddelbuettel.com/code/rinside.html
+	: tool to make embedding R in C++ easier
+Statistics::useR
+	http://p3rl.org/Statistics::useR
+	: CPAN module that uses the Rembedded API to provide a thin wrapper around
+	: R code evaluation. Forking is used to support multiple interpreters, but
+	: data is not shared after the fork, nor is there a sharing mechanism
+	: built-in for use after the fork (that is, *besides* loading the
+	: necessary data before forking).
+
+Statistics::R
+	http://p3rl.org/Statistics::R
+	: CPAN module that uses pipes to control an R subprocess
+
+
+Problems to solve
+	a good way to represent R objects in Perl
+		; data.frame()
+	PDL support
