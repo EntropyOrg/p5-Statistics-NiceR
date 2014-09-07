@@ -1,3 +1,5 @@
+Build
+	sudo apt-get install libbz2-dev
 Rinside
 	http://dirk.eddelbuettel.com/code/rinside.html
 	: tool to make embedding R in C++ easier

@@ -3,20 +3,19 @@
 use strict;
 use warnings;
 
+use FindBin;
+use lib "$FindBin::Bin/lib";
+use Inline with => 'Rinline';
+use Inline C => DATA =>;
+
 # NOTE
 # http://stackoverflow.com/questions/2463437/r-from-c-simplest-possible-helloworld
 
-BEGIN {
-	my $Rhome = `R RHOME`;
-	chomp $Rhome;
-	$ENV{R_HOME} = $Rhome;
-}
-my $R_inc = `R CMD config --cppflags`;
-my $R_libs   = `R CMD config --ldflags`;
+run_R();
 
-use Inline;
+__END__
+__C__
 
-Inline->bind( C => <<'END_OF_C'
 int run_R() {
 	char *localArgs[] = {"R", "--no-save","--silent"};
 	SEXP e, tmp, ret;
@@ -65,13 +64,3 @@ int run_R() {
 	Rf_endEmbeddedR(0);
 	return(0);
 }
-END_OF_C
-=>  INC => $R_inc
-=> LIBS => $R_libs
-=> AUTO_INCLUDE => q{
- #include <Rinternals.h>
- #include <Rembedded.h>
- #include <R_ext/Parse.h>
-});
-
-run_R();
