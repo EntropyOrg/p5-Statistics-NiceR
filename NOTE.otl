@@ -1,5 +1,7 @@
 Build
 	sudo apt-get install libbz2-dev
+API
+	http://cran.r-project.org/doc/manuals/R-exts.pdf
 Rinside
 	http://dirk.eddelbuettel.com/code/rinside.html
 	: tool to make embedding R in C++ easier
