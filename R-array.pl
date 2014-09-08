@@ -14,7 +14,7 @@ use Inline C => Config => # later: with => 'PDL'
 	AUTO_INCLUDE  => &PDL_AUTO_INCLUDE, # declarations
 	BOOT          => &PDL_BOOT;         # code for the XS boot section
 
-use Inline C => DATA =>;
+use Inline 'C' ;
 
 my $p = sequence(3,3,3);
 
@@ -29,12 +29,6 @@ stop_R();
 
 __END__
 __C__
-
-#include "EXTERN.h"
-#include "perl.h"
-#include "XSUB.h"
-
-//#include "pdl.h"
 
 void start_R() {
 	char *localArgs[] = {"R", "--no-save","--silent"};
