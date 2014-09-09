@@ -74,9 +74,7 @@ SEXP make_r_array( pdl* p ) {
 	/* NOTE: on DESTROY, call R_ReleaseObject() */
 
 	datad = p->data;
-	for( elem_i = 0; elem_i < nelems; elem_i++ ) {
-		REAL(r_array)[elem_i] = datad[elem_i];
-	}
+	memcpy( REAL(r_array), datad, sizeof(PDL_Double) * nelems );
 
 	UNPROTECT(1); /* r_dims */
 
@@ -123,10 +121,7 @@ pdl* make_pdl_array( SEXP r_array ) {
 	PDL->allocdata (p);             /* allocate the data chunk */
 
 	datad = (PDL_Double *) p->data;
-
-	for( elem_i = 0; elem_i < nelems; elem_i++ ) {
-		datad[elem_i] = REAL(r_array)[elem_i];
-	}
+	memcpy( datad, REAL(r_array), sizeof(PDL_Double) * nelems );
 
 	return p;
 }
