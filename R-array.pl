@@ -8,6 +8,7 @@ use lib "$FindBin::Bin/lib";
 use PDL::LiteF;
 use PDL::Core::Dev;
 use Inline with => 'Rinline';
+use Inline C => Config => TYPEMAPS => 'typemap';
 use Inline C => Config => # later: with => 'PDL'
 	INC           => &PDL_INCLUDE,
 	TYPEMAPS      => &PDL_TYPEMAP,
@@ -20,10 +21,12 @@ my $p = sequence(3,3,3);
 
 start_R();
 
-my $p_R = make_r_array( $p );
-use DDP; p $p_R;
+# R: pnorm( array(0:26, dim=c(3,3,3)) )
 
+my $p_R = make_r_array( $p );
 my $pnorm_R = call_pnorm( $p_R );
+my $pnorm_pdl = make_pdl_array($pnorm_R);
+use DDP; p $pnorm_pdl;
 
 stop_R();
 
@@ -51,10 +54,11 @@ SEXPTYPE PDL_to_R_type( int pdl_type ) {
 	}
 }
 
-SV* make_r_array( pdl* p ) {
+SEXP make_r_array( pdl* p ) {
 	SEXP r_dims, r_array;
 	SV* ret;
-	int dim_i;
+	int dim_i, elem_i;
+	PDL_Double* datad;
 
 	int r_type = PDL_to_R_type( p->datatype );
 
@@ -69,38 +73,62 @@ SV* make_r_array( pdl* p ) {
 	dimgets( r_array, r_dims ); /* set dimensions */
 	/* NOTE: on DESTROY, call R_ReleaseObject() */
 
+	datad = p->data;
+	for( elem_i = 0; elem_i < nelems; elem_i++ ) {
+		REAL(r_array)[elem_i] = datad[elem_i];
+	}
+
 	UNPROTECT(1); /* r_dims */
 
-	ret = sv_newmortal();
-	sv_setref_pv(ret, "RArray", (void*)r_array);
-	printf("1. %d\n", r_array);
-
-	return SvREFCNT_inc(ret);
+	return r_array;
 }
 
-SV* call_pnorm( SV* r_sv ) {
+SEXP call_pnorm( SEXP r_array ) {
 	SEXP pnorm, result;
 	SV* ret;
-
-	SEXP r_array = SvPV_nolen(r_sv);
-	printf("2. %d\n", r_sv);
-
 
 	PROTECT( pnorm = install("pnorm") );
 
 	result = eval(lang2(pnorm, r_array), R_GlobalEnv);
 
 	UNPROTECT( 1 ); /* pnorm */
-	return NULL;
 
-	//ret = sv_newmortal();
-	//sv_setref_pv(ret, "RArray", (void*)result);
-
-	//return ret;
+	return result;
 }
 
 pdl* make_pdl_array( SEXP r_array ) {
+	SEXP r_dims;
+	int ndims;
+	PDL_Indx* dims;
+	pdl* p;
+	int dim_i, elem_i;
+	PDL_Indx nelems = 1;
+	PDL_Double *datad;
+	int datatype;
 
+	r_dims = getAttrib(r_array, R_DimSymbol);
+	ndims = Rf_length(r_dims);
+
+	Newx(dims, ndims, PDL_Indx);
+	for( dim_i = 0; dim_i < ndims; dim_i++ ) {
+		dims[dim_i] = INTEGER(r_dims)[dim_i];
+		nelems *= dims[dim_i];
+	}
+
+	datatype = PDL_D; /* TODO */
+
+	p = PDL->pdlnew();
+	PDL->setdims (p, dims, ndims);  /* set dims */
+	p->datatype = datatype;         /* and data type */
+	PDL->allocdata (p);             /* allocate the data chunk */
+
+	datad = (PDL_Double *) p->data;
+
+	for( elem_i = 0; elem_i < nelems; elem_i++ ) {
+		datad[elem_i] = REAL(r_array)[elem_i];
+	}
+
+	return p;
 }
 
 void stop_R() {
