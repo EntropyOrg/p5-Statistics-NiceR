@@ -7,7 +7,7 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use PDL::LiteF;
 use PDL::Core::Dev;
-use Inline with => 'Rinline';
+use Inline with => qw(Rinline Rpdl);
 use Inline C => Config => TYPEMAPS => 'typemap';
 use Inline C => Config => # later: with => 'PDL'
 	INC           => &PDL_INCLUDE,
@@ -32,11 +32,6 @@ stop_R();
 
 __END__
 __C__
-
-void start_R() {
-	char *localArgs[] = {"R", "--no-save","--silent"};
-	Rf_initEmbeddedR(3, localArgs);
-}
 
 SEXPTYPE PDL_to_R_type( int pdl_type ) {
 	switch(pdl_type) {
@@ -81,19 +76,6 @@ SEXP make_r_array( pdl* p ) {
 	return r_array;
 }
 
-SEXP call_pnorm( SEXP r_array ) {
-	SEXP pnorm, result;
-	SV* ret;
-
-	PROTECT( pnorm = install("pnorm") );
-
-	result = eval(lang2(pnorm, r_array), R_GlobalEnv);
-
-	UNPROTECT( 1 ); /* pnorm */
-
-	return result;
-}
-
 pdl* make_pdl_array( SEXP r_array ) {
 	SEXP r_dims;
 	int ndims;
@@ -124,6 +106,24 @@ pdl* make_pdl_array( SEXP r_array ) {
 	memcpy( datad, REAL(r_array), sizeof(PDL_Double) * nelems );
 
 	return p;
+}
+
+void start_R() {
+	char *localArgs[] = {"R", "--no-save","--silent"};
+	Rf_initEmbeddedR(3, localArgs);
+}
+
+SEXP call_pnorm( SEXP r_array ) {
+	SEXP pnorm, result;
+	SV* ret;
+
+	PROTECT( pnorm = install("pnorm") );
+
+	result = eval(lang2(pnorm, r_array), R_GlobalEnv);
+
+	UNPROTECT( 1 ); /* pnorm */
+
+	return result;
 }
 
 void stop_R() {
