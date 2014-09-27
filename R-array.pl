@@ -15,6 +15,7 @@ use Inline C => Config => # later: with => 'PDL'
 	AUTO_INCLUDE  => &PDL_AUTO_INCLUDE, # declarations
 	BOOT          => &PDL_BOOT;         # code for the XS boot section
 
+use R::Sexp;
 use Inline 'C' ;
 
 my $p = sequence(3,3,3);
@@ -25,6 +26,8 @@ start_R();
 
 my $p_R = make_r_array( $p );
 my $pnorm_R = call_pnorm( $p_R );
+use DDP; p $pnorm_R;
+use DDP; p $pnorm_R->R::Sexp::attrib;
 my $pnorm_pdl = make_pdl_array($pnorm_R);
 use DDP; p $pnorm_pdl;
 
@@ -32,6 +35,8 @@ stop_R();
 
 __END__
 __C__
+
+typedef SEXP R__Sexp;
 
 SEXPTYPE PDL_to_R_type( int pdl_type ) {
 	switch(pdl_type) {
@@ -49,8 +54,8 @@ SEXPTYPE PDL_to_R_type( int pdl_type ) {
 	}
 }
 
-SEXP make_r_array( pdl* p ) {
-	SEXP r_dims, r_array;
+R__Sexp make_r_array( pdl* p ) {
+	R__Sexp r_dims, r_array;
 	SV* ret;
 	int dim_i, elem_i;
 	PDL_Double* datad;
@@ -76,9 +81,9 @@ SEXP make_r_array( pdl* p ) {
 	return r_array;
 }
 
-pdl* make_pdl_array( SEXP r_array ) {
-	SEXP r_dims;
-	int ndims;
+pdl* make_pdl_array( R__Sexp r_array ) {
+	R__Sexp r_dims;
+	size_t ndims;
 	PDL_Indx* dims;
 	pdl* p;
 	int dim_i, elem_i;
@@ -95,7 +100,7 @@ pdl* make_pdl_array( SEXP r_array ) {
 		nelems *= dims[dim_i];
 	}
 
-	datatype = PDL_D; /* TODO */
+	datatype = PDL_D; /* TODO : R_to_PDL_type */
 
 	p = PDL->pdlnew();
 	PDL->setdims (p, dims, ndims);  /* set dims */
@@ -113,8 +118,8 @@ void start_R() {
 	Rf_initEmbeddedR(3, localArgs);
 }
 
-SEXP call_pnorm( SEXP r_array ) {
-	SEXP pnorm, result;
+R__Sexp call_pnorm( R__Sexp r_array ) {
+	R__Sexp pnorm, result;
 	SV* ret;
 
 	PROTECT( pnorm = install("pnorm") );
