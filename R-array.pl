@@ -19,17 +19,27 @@ use R::Sexp;
 use Inline 'C' ;
 
 my $p = sequence(3,3,3);
+my $q = sequence(3,3,3);
+# R:  ifelse( q %% 2, NA, q )
+$q = $q->setbadif( $q % 2 );
+use DDP; p $q;
 
 start_R();
 
 # R: pnorm( array(0:26, dim=c(3,3,3)) )
 
 my $p_R = make_r_array( $p );
+my $q_R = make_r_array( $q );
+
 my $pnorm_R = call_pnorm( $p_R );
+my $pnorm_q_R = call_pnorm( $q_R );
+
 use DDP; p $pnorm_R;
 use DDP; p $pnorm_R->R::Sexp::attrib;
 my $pnorm_pdl = make_pdl_array($pnorm_R);
+my $pnorm_q_pdl = make_pdl_array($pnorm_q_R);
 use DDP; p $pnorm_pdl;
+use DDP; p $pnorm_q_pdl;
 
 stop_R();
 
@@ -59,11 +69,14 @@ R__Sexp make_r_array( pdl* p ) {
 	SV* ret;
 	int dim_i, elem_i;
 	PDL_Double* datad;
+	PDL_Double badv;
+	int r_type;
+	PDL_Indx nelems;
 
-	int r_type = PDL_to_R_type( p->datatype );
+	r_type = PDL_to_R_type( p->datatype );
 
 	PROTECT( r_dims = allocVector( INTSXP, p->ndims ) );
-	PDL_Indx nelems = 1;
+	nelems = 1;
 	for( dim_i = 0; dim_i < p->ndims; dim_i++ ) {
 		INTEGER(r_dims)[dim_i] = p->dims[dim_i];
 		nelems *= p->dims[dim_i];
@@ -75,6 +88,14 @@ R__Sexp make_r_array( pdl* p ) {
 
 	datad = p->data;
 	memcpy( REAL(r_array), datad, sizeof(PDL_Double) * nelems );
+	badv = PDL->get_pdl_badvalue(p);
+	if( p->state & PDL_BADVAL ) {
+		for( elem_i = 0; elem_i < nelems; elem_i++ ) {
+			if( datad[elem_i] == badv ) {
+				REAL(r_array)[elem_i] = NA_REAL;
+			}
+		}
+	}
 
 	UNPROTECT(1); /* r_dims */
 
@@ -89,6 +110,7 @@ pdl* make_pdl_array( R__Sexp r_array ) {
 	int dim_i, elem_i;
 	PDL_Indx nelems = 1;
 	PDL_Double *datad;
+	PDL_Double badv;
 	int datatype;
 
 	r_dims = getAttrib(r_array, R_DimSymbol);
@@ -108,7 +130,14 @@ pdl* make_pdl_array( R__Sexp r_array ) {
 	PDL->allocdata (p);             /* allocate the data chunk */
 
 	datad = (PDL_Double *) p->data;
+	badv = PDL->get_pdl_badvalue(p);
 	memcpy( datad, REAL(r_array), sizeof(PDL_Double) * nelems );
+	for( elem_i = 0; elem_i < nelems; elem_i++ ) {
+		if( ISNA( REAL(r_array)[elem_i] ) ) {
+			p->state |= PDL_BADVAL;
+			datad[elem_i] = badv;
+		}
+	}
 
 	return p;
 }
