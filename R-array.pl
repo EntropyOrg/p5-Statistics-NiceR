@@ -129,6 +129,8 @@ pdl* make_pdl_array( R__Sexp r_array ) {
 	p->datatype = datatype;         /* and data type */
 	PDL->allocdata (p);             /* allocate the data chunk */
 
+	Safefree(dims);
+
 	datad = (PDL_Double *) p->data;
 	badv = PDL->get_pdl_badvalue(p);
 	memcpy( datad, REAL(r_array), sizeof(PDL_Double) * nelems );
