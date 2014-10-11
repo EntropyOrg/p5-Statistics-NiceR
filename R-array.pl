@@ -55,14 +55,10 @@ sub eval_SV_run {
 }
 
 
-Rinterp::start_R();
-
 #p_run;
 #q_run;
 eval_SV_run;
 
-
-Rinterp::stop_R();
 
 __END__
 __C__
