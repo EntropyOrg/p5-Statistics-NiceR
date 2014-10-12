@@ -9,7 +9,7 @@ use PDL::LiteF;
 use Inline with => qw(Rinline Rpdl);
 use Inline C => Config => TYPEMAPS => 'typemap';
 
-use Rinterp;
+use R;
 use R::Sexp;
 use Inline 'C' ;
 
@@ -43,9 +43,9 @@ sub q_run {
 }
 
 sub eval_SV_run {
-	# handle errors
+	# TODO handle errors
 	#my $array_R = eval_SV('as.real( array(0:26, dim=c(3,3,3)) )');
-	my $array_R = eval_SV('array(as.double(0:26), dim=c(3,3,3))');
+	my $array_R = Rinterp::eval_SV('array(as.double(0:26), dim=c(3,3,3))');
 
 	use DDP; p $array_R;
 
