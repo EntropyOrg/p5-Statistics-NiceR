@@ -25,3 +25,15 @@ char* r_class( R__Sexp self ) {
 		);
 }
 
+char* r_typeof( R__Sexp self ) {
+	/* TODO */
+	R__Sexp r_typeof, result;
+
+	PROTECT( r_typeof = install("typeof") );
+
+	result = eval(lang2(r_typeof, self), R_GlobalEnv);
+
+	UNPROTECT( 1 ); /* r_typeof */
+
+	return strsxp_to_charptr( result );
+}
