@@ -1,4 +1,4 @@
-package Rinline;
+package R::Inline::Rinline;
 
 use strict;
 use warnings;

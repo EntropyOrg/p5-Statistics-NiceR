@@ -1,4 +1,4 @@
-package Rpdl;
+package R::Inline::Rpdl;
 
 use strict;
 use warnings;
@@ -14,7 +14,5 @@ sub Inline {
 		BOOT          => &PDL_BOOT('PDL'),         # code for the XS boot section
 	};
 }
-
-
 
 1;

@@ -3,7 +3,8 @@ package Rinterp;
 use strict;
 use warnings;
 
-use Inline with => qw(Rinline);
+# TODO Rpdl shouldn't be included, but need for the use in rintutil.c
+use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
 use Inline 'C';
 
 our $loaded = -1;
