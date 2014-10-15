@@ -27,6 +27,9 @@ my $test_data = [
 	{ r_eval => q{ array(as.double(0:26), dim=c(3,3,3)) },
 	  r_class => 'array', r_typeof => 'double',
 	  perl_data => sequence(3,3,3) },
+	{ r_eval => q{ array(0:26, dim=c(3,3,3)) },
+	  r_class => 'array', r_typeof => 'double',
+	  perl_data => sequence(3,3,3) },
 
 ];
 

@@ -54,7 +54,7 @@ R__Sexp make_r_array( pdl* p ) {
 
 	R_PreserveObject(  r_array = allocVector(r_type, nelems) );
 	dimgets( r_array, r_dims ); /* set dimensions */
-	/* NOTE: on DESTROY, call R_ReleaseObject() */
+	/* TODO NOTE: on DESTROY, call R_ReleaseObject() */
 
 	datad = p->data;
 	memcpy( REAL(r_array), datad, sizeof(PDL_Double) * nelems );
