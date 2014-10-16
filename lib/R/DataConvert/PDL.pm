@@ -22,6 +22,8 @@ my $pdl_to_r = {
 
 # TODO
 
+# TODO R PP macro (PDL::PP::Rule::Substitute)?
+
 1;
 __DATA__
 __Pdlpp__
