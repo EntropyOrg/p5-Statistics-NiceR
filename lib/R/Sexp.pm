@@ -20,6 +20,11 @@ size_t attrib( R__Sexp self ) {
 
 char* r_class( R__Sexp self ) {
 	/* TODO */
+	/* see note about R_data_class in rpy2/rpy/rinterface/sexp.c
+	 *
+	 * > R_data_class is not exported, although R's own
+	 * > package "methods" needs it as part of the API
+	 */
 	return strsxp_to_charptr(
 			R_data_class(self, (Rboolean) 0)
 		);
