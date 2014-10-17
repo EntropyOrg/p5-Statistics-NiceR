@@ -4,23 +4,28 @@ use strict;
 use warnings;
 
 use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
-use Inline 'C';
+use File::Slurp;
+use PDL::Types;
+use Text::Template;
 
-my $charsxp =  { sexptype => 'CHARSXP' };
-my $intsxp = { sexptype => 'INTSXP' };
-my $realxsp = { sexptype => 'REALSXP' };
+my $charsxp = { sexptype => 'CHARSXP', r_macro => 'CHARACTER' };
+my $intsxp  = { sexptype => 'INTSXP',  r_macro => 'INTEGER'   };
+my $realxsp = { sexptype => 'REALSXP', r_macro => 'REAL'      };
 my $pdl_to_r = {
-		PDL_B   => $charsxp,
+		PDL_B   => { %$charsxp },
 
-		PDL_S   => $intsxp,
-		PDL_US  => $intsxp,
-		PDL_L   => $intsxp,
-		PDL_IND => $intsxp,
-		PDL_LL  => $intsxp,
+		PDL_S   => { %$intsxp },
+		PDL_US  => { %$intsxp },
+		PDL_L   => { %$intsxp },
+		PDL_IND => { %$intsxp },
+		PDL_LL  => { %$intsxp },
 
-		PDL_F   => $realxsp,
-		PDL_D   => $realxsp,
+		PDL_F   => { %$realxsp },
+		PDL_D   => { %$realxsp },
 };
+for my $type (PDL::Types::typesrtkeys()) {
+	$pdl_to_r->{$type}{ctype} = PDL::Types::typefld($type, 'ctype');
+}
 
 # TODO
 
@@ -46,6 +51,14 @@ sub convert_perl_to_r {
 	}
 	die "could not convert";
 }
+
+# read in template and fill
+my $template_string = read_file(\*DATA);
+$template_string =~ s/^__C__$//msg;
+my $template = Text::Template->new(
+	TYPE => 'STRING', SOURCE => $template_string,
+	DELIMITERS => ['{{{', '}}}'], );
+Inline->bind( C => $template->fill_in() );
 
 
 1;
