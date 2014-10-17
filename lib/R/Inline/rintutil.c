@@ -19,10 +19,21 @@ SEXPTYPE PDL_to_R_type( int pdl_type ) {
 		case PDL_D:
 			return REALSXP;
 	}
+  return -1; /* TODO exception */
 }
 
-int R_to_PDL_type() {
-	/* TODO */
+int R_to_PDL_type(SEXPTYPE r_type) {
+	switch(r_type) {
+		case REALSXP: return PDL_D; break;
+
+		case LGLSXP:
+		case INTSXP: return PDL_L; /* TODO is this correct? should I check: .Machine$integer.max */
+
+		case CPLXSXP: return -1; /* TODO map to PDL::Complex */
+
+		case STRSXP: return -1; /* TODO map to string or PDL::Char */
+  }
+  return -1; /* TODO exception */
 }
 
 char* strsxp_to_charptr(SEXP strsexp) {

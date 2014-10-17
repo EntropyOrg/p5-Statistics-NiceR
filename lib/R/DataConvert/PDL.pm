@@ -11,6 +11,9 @@ use Text::Template;
 my $charsxp = { sexptype => 'CHARSXP', r_macro => 'CHARACTER' };
 my $intsxp  = { sexptype => 'INTSXP',  r_macro => 'INTEGER'   };
 my $realxsp = { sexptype => 'REALSXP', r_macro => 'REAL'      };
+# NA_REAL, NA_INTEGER, NA_LOGICAL, NA_STRING
+#
+# NA_COMPLEX, NA_CHARACTER?
 my $pdl_to_r = {
 		PDL_B   => { %$charsxp },
 
@@ -58,7 +61,7 @@ $template_string =~ s/^__C__$//msg;
 my $template = Text::Template->new(
 	TYPE => 'STRING', SOURCE => $template_string,
 	DELIMITERS => ['{{{', '}}}'], );
-Inline->bind( C => $template->fill_in() );
+Inline->bind( C => $template->fill_in( HASH => { pdl_to_r => \$pdl_to_r }  ) );
 
 
 1;
@@ -71,8 +74,15 @@ R__Sexp make_r_array( pdl* p ) {
 	R__Sexp r_dims, r_array;
 	SV* ret;
 	int dim_i, elem_i;
-	PDL_Double* datad;
-	PDL_Double badv;
+{{{
+	# TODO cover all types
+	for my $type (qw(PDL_Double)) {
+		$OUT .= qq{
+		$type *datad;
+		$type  badv;
+		};
+	}
+}}}
 	int r_type;
 	PDL_Indx nelems;
 
@@ -89,6 +99,7 @@ R__Sexp make_r_array( pdl* p ) {
 	dimgets( r_array, r_dims ); /* set dimensions */
 	/* TODO NOTE: on DESTROY, call R_ReleaseObject() */
 
+	/* TODO support more types */
 	datad = p->data;
 	memcpy( REAL(r_array), datad, sizeof(PDL_Double) * nelems );
 	badv = PDL->get_pdl_badvalue(p);
@@ -112,8 +123,15 @@ pdl* make_pdl_array( R__Sexp r_array ) {
 	pdl* p;
 	int dim_i, elem_i;
 	PDL_Indx nelems = 1;
-	PDL_Double *datad;
-	PDL_Double badv;
+{{{
+	# TODO cover all types
+	for my $type (qw(PDL_D PDL_L)) {
+		$OUT .= qq%
+		$pdl_to_r->{$type}{ctype} *datad_$type;
+		$pdl_to_r->{$type}{ctype}  badv_$type;
+		%;
+	}
+}}}
 	int datatype;
 
 	r_dims = getAttrib(r_array, R_DimSymbol);
@@ -125,7 +143,7 @@ pdl* make_pdl_array( R__Sexp r_array ) {
 		nelems *= dims[dim_i];
 	}
 
-	datatype = PDL_D; /* TODO : R_to_PDL_type */
+	datatype = R_to_PDL_type(TYPEOF(r_array)); /* TODO : R_to_PDL_type */
 
 	p = PDL->pdlnew();
 	PDL->setdims (p, dims, ndims);  /* set dims */
@@ -134,14 +152,25 @@ pdl* make_pdl_array( R__Sexp r_array ) {
 
 	Safefree(dims);
 
-	datad = (PDL_Double *) p->data;
-	badv = PDL->get_pdl_badvalue(p);
-	memcpy( datad, REAL(r_array), sizeof(PDL_Double) * nelems );
+	switch(datatype) {
+{{{
+for my $type (qw(PDL_D PDL_L)) {
+	$OUT .= qq%
+	case $type:
+	datad_$type = ($pdl_to_r->{$type}{ctype} *) p->data;
+	badv_$type = PDL->get_pdl_badvalue(p);
+	memcpy( datad_$type, $pdl_to_r->{$type}{r_macro}(r_array), sizeof($pdl_to_r->{$type}{ctype}) * nelems );
 	for( elem_i = 0; elem_i < nelems; elem_i++ ) {
-		if( ISNA( REAL(r_array)[elem_i] ) ) {
+		if( ISNA( $pdl_to_r->{$type}{r_macro}(r_array)[elem_i] ) ) {
 			p->state |= PDL_BADVAL;
-			datad[elem_i] = badv;
+			datad_${type}[elem_i] = badv_$type;
 		}
+	}
+	break;
+	%;
+}
+}}}
+
 	}
 
 	return p;
