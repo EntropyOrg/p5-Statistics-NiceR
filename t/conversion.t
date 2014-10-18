@@ -29,13 +29,21 @@ my $test_data = [
 	  r_class => 'array', r_typeof => 'double',
 	  pdl_data => sequence(3,3,3),
 	  note => 'n-d array of doubles' },
+
 	{ r_eval => q{ array(0:26, dim=c(3,3,3)) },
 	  r_class => 'array', r_typeof => 'integer',
 	  pdl_data => sequence(3,3,3),
 	  note => 'n-d array of integers' },
+
+	{ r_eval => q{ "c(3,2,1)" },
+	  r_class => 'integer', r_typeof => 'integer',
+	  pdl_data => pdl(3,2,1),
+	  note => 'vector of integers' },
+
 	{ r_eval => q{ "a string" },
 	  r_class => 'character', r_typeof => 'character',
-	  perl_data => "a string" },
+	  perl_data => "a string",
+	  note => 'character string'},
 
 ];
 
