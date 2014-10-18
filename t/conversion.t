@@ -75,6 +75,16 @@ my $test_data = [
 	  pdl_data => undef, # TODO
 	  note => 'factor'},
 
+	{ r_eval => q{
+              ff <- factor( substring("statistics", 1:10, 1:10),
+                            levels = letters);
+              d <- data.frame(x = 1, y = 1:10, fac = ff) },
+	  r_class => 'data.frame', r_typeof => 'list',
+	  perl_data => undef, # TODO
+	  note => 'data frame'},
+
+# TODO: g <- list(1,2,3, 1:3); g[4]; g[[4]]
+
 ];
 
 plan tests => scalar @$test_data;
