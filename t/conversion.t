@@ -45,6 +45,17 @@ my $test_data = [
 	  pdl_data => pdl(3,2,1),
 	  note => 'vector of integers' },
 
+# TODO matrix
+	{ r_eval => q{
+	      mdat <- matrix(c(1,2,3, 11,12,13),
+	            nrow = 2, ncol = 3, byrow = TRUE,
+	            dimnames = list(c("row1", "row2"),
+	            c("C.1", "C.2", "C.3"))) },
+	  r_class => 'matrix', r_typeof => 'double',
+	  pdl_data => pdl( q[ 1 2 3; 11 12 13 ] ),
+	  note => 'a matrix'
+	},
+
 	{ r_eval => q{ "a string" },
 	  r_class => 'character', r_typeof => 'character',
 	  perl_data => "a string",

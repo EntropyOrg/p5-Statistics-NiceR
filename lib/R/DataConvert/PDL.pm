@@ -40,6 +40,9 @@ sub convert_r_to_perl {
 	if( ref $data ) {
 		if( $data->R::Sexp::r_class eq 'array' ) {
 			return make_pdl_array( $data );
+		} elsif( $data->R::Sexp::r_class eq 'matrix' ) {
+			# TODO does this make sense?
+			return make_pdl_array( $data )->xchg(0,1);
 		} elsif( $data->R::Sexp::r_class =~ /^(integer|numeric)$/  ) {
 			return make_pdl_vector( $data );
 		}
