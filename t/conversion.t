@@ -85,6 +85,12 @@ my $test_data = [
 
 # TODO: g <- list(1,2,3, 1:3); g[4]; g[[4]]
 
+# TODO:
+# >  k_iris <- kmeans( iris[,-5], centers=3 ); class(k_iris); typeof(k_iris)
+# [1] "kmeans"
+# [1] "list"
+# > fitted(k_iris) # S3 method
+
 ];
 
 plan tests => scalar @$test_data;
