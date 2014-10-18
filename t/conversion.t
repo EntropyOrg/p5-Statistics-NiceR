@@ -45,7 +45,6 @@ my $test_data = [
 	  pdl_data => pdl(3,2,1),
 	  note => 'vector of integers' },
 
-# TODO matrix
 	{ r_eval => q{
 	      mdat <- matrix(c(1,2,3, 11,12,13),
 	            nrow = 2, ncol = 3, byrow = TRUE,
@@ -72,6 +71,7 @@ for my $t (@$test_data) {
 
 	subtest "$t->{note}: $t->{r_eval}" => sub {
 		compare( $perl_data, $t->{pdl_data}, "data" ) if exists $t->{pdl_data};
+		is( $perl_data, $t->{perl_data}, "data" ) if exists $t->{perl_data};
 		is( $r_data->R::Sexp::r_class, $t->{r_class}, "class: $t->{r_class}");
 		is( $r_data->R::Sexp::r_typeof, $t->{r_typeof}, "typeof: $t->{r_typeof}");
 	}
