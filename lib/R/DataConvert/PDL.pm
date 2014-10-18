@@ -40,6 +40,8 @@ sub convert_r_to_perl {
 	if( ref $data ) {
 		if( $data->R::Sexp::r_class eq 'array' ) {
 			return make_pdl_array( $data );
+		} elsif( $data->R::Sexp::r_class =~ /^(integer|numeric)$/  ) {
+			return make_pdl_vector( $data );
 		}
 	}
 	die "could not convert";
@@ -162,6 +164,60 @@ for my $type (qw(PDL_D PDL_L)) {
 	memcpy( datad_$type, $pdl_to_r->{$type}{r_macro}(r_array), sizeof($pdl_to_r->{$type}{ctype}) * nelems );
 	for( elem_i = 0; elem_i < nelems; elem_i++ ) {
 		if( ISNA( $pdl_to_r->{$type}{r_macro}(r_array)[elem_i] ) ) {
+			p->state |= PDL_BADVAL;
+			datad_${type}[elem_i] = badv_$type;
+		}
+	}
+	break;
+	%;
+}
+}}}
+
+	}
+
+	return p;
+}
+
+pdl* make_pdl_vector( R__Sexp r_vector ) {
+	size_t ndims;
+	PDL_Indx* dims;
+	pdl* p;
+	int elem_i;
+	PDL_Indx nelems = 1;
+{{{
+	# TODO cover all types
+	for my $type (qw(PDL_D PDL_L)) {
+		$OUT .= qq%
+		$pdl_to_r->{$type}{ctype} *datad_$type;
+		$pdl_to_r->{$type}{ctype}  badv_$type;
+		%;
+	}
+}}}
+	int datatype;
+
+	ndims = 1;
+	Newx(dims, ndims, PDL_Indx);
+	dims[0] = nelems = Rf_length(r_vector);
+
+	datatype = R_to_PDL_type(TYPEOF(r_vector)); /* TODO : R_to_PDL_type */
+
+	p = PDL->pdlnew();
+	PDL->setdims (p, dims, ndims);  /* set dims */
+	p->datatype = datatype;         /* and data type */
+	PDL->allocdata (p);             /* allocate the data chunk */
+
+	Safefree(dims);
+
+	switch(datatype) {
+{{{
+for my $type (qw(PDL_D PDL_L)) {
+	$OUT .= qq%
+	case $type:
+	datad_$type = ($pdl_to_r->{$type}{ctype} *) p->data;
+	badv_$type = PDL->get_pdl_badvalue(p);
+	memcpy( datad_$type, $pdl_to_r->{$type}{r_macro}(r_vector), sizeof($pdl_to_r->{$type}{ctype}) * nelems );
+	for( elem_i = 0; elem_i < nelems; elem_i++ ) {
+		if( ISNA( $pdl_to_r->{$type}{r_macro}(r_vector)[elem_i] ) ) {
 			p->state |= PDL_BADVAL;
 			datad_${type}[elem_i] = badv_$type;
 		}
