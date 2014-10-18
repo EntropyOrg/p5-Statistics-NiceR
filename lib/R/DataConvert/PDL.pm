@@ -8,9 +8,9 @@ use File::Slurp;
 use PDL::Types;
 use Text::Template;
 
-my $charsxp = { sexptype => 'CHARSXP', r_macro => 'CHARACTER' };
-my $intsxp  = { sexptype => 'INTSXP',  r_macro => 'INTEGER'   };
-my $realxsp = { sexptype => 'REALSXP', r_macro => 'REAL'      };
+my $charsxp = { sexptype => 'CHARSXP', r_macro => 'CHARACTER',                      };
+my $intsxp  = { sexptype => 'INTSXP',  r_macro => 'INTEGER',   r_NA => 'NA_INTEGER' };
+my $realxsp = { sexptype => 'REALSXP', r_macro => 'REAL',      r_NA => 'NA_REAL'    };
 # NA_REAL, NA_INTEGER, NA_LOGICAL, NA_STRING
 #
 # NA_COMPLEX, NA_CHARACTER?
@@ -111,7 +111,7 @@ R__Sexp make_r_array( pdl* p ) {
 	if( p->state & PDL_BADVAL ) {
 		for( elem_i = 0; elem_i < nelems; elem_i++ ) {
 			if( datad[elem_i] == badv ) {
-				REAL(r_array)[elem_i] = NA_REAL;
+				REAL(r_array)[elem_i] = NA_REAL; /* use r_NA */
 			}
 		}
 	}
