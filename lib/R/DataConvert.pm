@@ -16,7 +16,7 @@ sub convert_r_to_perl {
 			1;
 		} and return $ret;
 	}
-	die "could not convert";
+	die $@; # TODO rethrow
 }
 
 sub convert_perl_to_r {
@@ -28,7 +28,7 @@ sub convert_perl_to_r {
 			1;
 		} and return $ret;
 	}
-	die "could not convert";
+	die $@; # TODO rethrow
 }
 
 
