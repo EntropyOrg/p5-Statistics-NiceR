@@ -65,6 +65,17 @@ my $test_data = [
 	  perl_data => ["a", "b", "c"],
 	  note => 'character string vector'},
 
+# TODO: g <- list(1,2,3, 1:3); g[4]; g[[4]]
+	{ r_eval => q{  list(1,2,3) },
+	  r_class => 'list', r_typeof => 'list',
+	  perl_data => [ 1 , 2, 3 ],
+	  note => 'simple list'},
+
+	{ r_eval => q{  list(1,2,3, 1:3) },
+	  r_class => 'list', r_typeof => 'list',
+	  perl_data => [ 1 , 2, 3, [1..3] ],
+	  note => 'nested list'},
+
 	{ r_eval => q{
 	      ff <- factor( substring("statistics", 1:10, 1:10),
 	                    levels = letters) },
@@ -83,7 +94,6 @@ my $test_data = [
 	  perl_data => undef, # TODO
 	  note => 'data frame'},
 
-# TODO: g <- list(1,2,3, 1:3); g[4]; g[[4]]
 
 # TODO:
 # >  k_iris <- kmeans( iris[,-5], centers=3 ); class(k_iris); typeof(k_iris)
