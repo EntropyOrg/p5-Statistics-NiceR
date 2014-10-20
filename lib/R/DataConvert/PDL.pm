@@ -201,6 +201,12 @@ pdl* make_pdl_vector( R__Sexp r_vector ) {
 	ndims = 1;
 	Newx(dims, ndims, PDL_Indx);
 	dims[0] = nelems = Rf_length(r_vector);
+	if( dims[0] == 1 ) {
+		/* if there is a single value, treat it as a scalar instead of
+		 * as a vector.
+		 */
+		ndims = 0;
+	}
 
 	datatype = R_to_PDL_type(TYPEOF(r_vector)); /* TODO : R_to_PDL_type */
 
