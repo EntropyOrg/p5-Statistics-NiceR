@@ -12,7 +12,12 @@ sub convert_r_to_perl {
 		if( $data->R::Sexp::r_class eq 'character' ) {
 			return make_perl_string( $data );
 		} elsif( $data->R::Sexp::r_class eq 'list' ) {
-			...
+			return [ map {
+					my $curr = $_;
+					  ref $curr eq 'R__Sexp'
+					? R::DataConvert->convert_r_to_perl($curr)
+					: $curr
+				} @{ make_list( $data ) } ];
 		}
 	}
 	die "could not convert";
@@ -57,3 +62,25 @@ SV* make_perl_string( R__Sexp r_char ) {
 	return R_NilValue_to_Perl; /* shouldn't get here */
 }
 
+SV* make_list( R__Sexp r_list ) {
+	size_t len;
+	size_t i;
+	R__Sexp e;
+	SV* sv_tmp;
+	AV* l;
+
+	len = LENGTH(r_list);
+	l = newAV();
+	av_extend(l, len - 1); /* pre-allocate */
+	for( i = 0; i < len; i++ ) {
+		e = VECTOR_ELT(r_list, i);
+
+		/*sv_tmp = newSVrv(e, "R__Sexp");*/
+		sv_tmp = sv_newmortal();
+		sv_setref_pv(sv_tmp, "R__Sexp", (void*)e); /* TODO fix the classname */
+
+		av_store(l, i, SvREFCNT_inc(sv_tmp));
+	}
+	return newRV_inc(l);
+
+}
