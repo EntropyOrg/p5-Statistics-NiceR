@@ -68,12 +68,12 @@ my $test_data = [
 # TODO: g <- list(1,2,3, 1:3); g[4]; g[[4]]
 	{ r_eval => q{  list(1,2,3) },
 	  r_class => 'list', r_typeof => 'list',
-	  perl_data => [ 1 , 2, 3 ],
+	  perl_data => [ pdl(1) , pdl(2), pdl(3) ],
 	  note => 'simple list'},
 
-	{ r_eval => q{  list(1,2,3, 1:3) },
+	{ r_eval => q{  list(1,2,3, as.double(1:3)) },
 	  r_class => 'list', r_typeof => 'list',
-	  perl_data => [ 1 , 2, 3, [1..3] ],
+	  perl_data => [ pdl(1) , pdl(2), pdl(3), pdl([1..3]) ],
 	  note => 'nested list'},
 
 	{ r_eval => q{
