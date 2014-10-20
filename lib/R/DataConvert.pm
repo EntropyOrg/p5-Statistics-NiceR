@@ -13,8 +13,8 @@ sub convert_r_to_perl {
 		eval {
 			no strict 'refs';
 			$ret = &{"${p}::convert_r_to_perl"}(@_);
-		};
-		return $ret if defined $ret;
+			1;
+		} and return $ret;
 	}
 	die "could not convert";
 }
@@ -25,9 +25,10 @@ sub convert_perl_to_r {
 		eval {
 			no strict 'refs';
 			$ret = &{"${p}::convert_perl_to_r"}(@_);
-		};
-		return $ret if defined $ret;
+			1;
+		} and return $ret;
 	}
+	die "could not convert";
 }
 
 
