@@ -113,17 +113,20 @@ for my $t (@$test_data) {
 		my $perl_data;
 		eval {
 			$perl_data = R::DataConvert->convert_r_to_perl( $r_data ); 1
-		} or ok(0, 'conversion failed');
+		} or ok(0, "conversion failed: $@");
+		my $conversion = !$@;
 
-		compare( $perl_data, $t->{pdl_data}, "PDL data" ) if exists $t->{pdl_data};
-		if( exists $t->{perl_data} ) {
-			use PDL::IO::Dumper;
-			my $s_perl_data = sdump($perl_data);
-			my $s_expected_perl_data = sdump($t->{perl_data});
-			is( $s_perl_data , $s_expected_perl_data, 'Perl data [compare dump]' );
+		if( $conversion ) {
+			compare( $perl_data, $t->{pdl_data}, "PDL data" ) if exists $t->{pdl_data};
+			if( exists $t->{perl_data} ) {
+				use PDL::IO::Dumper;
+				my $s_perl_data = sdump($perl_data);
+				my $s_expected_perl_data = sdump($t->{perl_data});
+				is( $s_perl_data , $s_expected_perl_data, 'Perl data [compare dump]' );
 
-			# the following throws "multielement piddle in conditional expression"
-			#is_deeply( $perl_data, $t->{perl_data}, "Perl data" );
+				# the following throws "multielement piddle in conditional expression"
+				#is_deeply( $perl_data, $t->{perl_data}, "Perl data" );
+			}
 		}
 		is( $r_data->R::Sexp::r_class, $t->{r_class}, "class: $t->{r_class}");
 		is( $r_data->R::Sexp::r_typeof, $t->{r_typeof}, "typeof: $t->{r_typeof}");
