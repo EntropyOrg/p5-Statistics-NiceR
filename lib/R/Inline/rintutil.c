@@ -36,33 +36,29 @@ int R_to_PDL_type(SEXPTYPE r_type) {
   return -1; /* TODO exception */
 }
 
-char* strsxp_to_charptr(SEXP strsexp) {
-	int n, i;
+char* strsxp_elt_to_charptr(SEXP strsexp, size_t elt) {
+	int n;
 	size_t total_len;
-	size_t temp_idx;
-	size_t temp_len;
 	char* temp;
 	char* str;
 
 	n = LENGTH(strsexp);
-	total_len = 0;
-	for(i = 0; i < n; i++) {
-		temp = CHAR(STRING_ELT(strsexp, i));
-		total_len += strlen(temp);
-	}
+	/* TODO die unless 0 <= elt < n */
+	temp = CHAR(STRING_ELT(strsexp, elt));
+
+	total_len = strlen( temp );
 
 	Newx(str, total_len + 1, char); /* TODO check for str != NULL */
 
-	temp_idx = 0;
-	for(i = 0; i < n; i++) {
-		temp = CHAR(STRING_ELT(strsexp, i));
-		temp_len = strlen( temp );
-		strncpy(&str[temp_idx], temp, temp_len);
-		temp_idx += temp_len;
-	}
+	strncpy(str, temp, total_len);
+
 	str[total_len] = '\0';
 
 	return str;
+}
+
+char* strsxp_to_charptr(SEXP strsexp) {
+	return strsxp_elt_to_charptr(strsexp, 0);
 }
 
 #endif /* RINTUTIL_H */
