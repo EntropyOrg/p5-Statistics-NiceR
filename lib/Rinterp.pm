@@ -58,7 +58,8 @@ R__Sexp eval_SV( SV* eval_sv ) {
 	for(i = 0; i < length(eval_expr_v); i++) {
 		ret = eval(VECTOR_ELT(eval_expr_v, i), R_GlobalEnv);
 	}
-	UNPROTECT(2);
+	UNPROTECT(2); /* tmp, eval_expr_v */
+	PROTECT(ret);
 
 	return ret;
 }
