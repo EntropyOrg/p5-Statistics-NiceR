@@ -6,21 +6,23 @@ use warnings;
 use R::Sexp;
 use R::DataConvert::PDL;
 use R::DataConvert::Perl;
+use R::DataConvert::Factor;
 
 sub convert_r_to_perl {
-	for my $p (qw(R::DataConvert::PDL R::DataConvert::Perl) ) {
+	for my $p (qw(R::DataConvert::PDL R::DataConvert::Perl R::DataConvert::Factor) ) {
 		my $ret;
 		eval {
 			no strict 'refs';
 			$ret = &{"${p}::convert_r_to_perl"}(@_);
 			1;
 		} and return $ret;
+		die $@ unless( $@ =~ /could not convert/ );
 	}
 	die $@; # TODO rethrow
 }
 
 sub convert_perl_to_r {
-	for my $p (qw(R::DataConvert::PDL R::DataConvert::Perl) ) {
+	for my $p (qw(R::DataConvert::PDL R::DataConvert::Perl R::DataConvert::Factor) ) {
 		my $ret;
 		eval {
 			no strict 'refs';
