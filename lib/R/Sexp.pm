@@ -13,9 +13,29 @@ __C__
 
 #include "rintutil.c"
 
-size_t attrib( R__Sexp self ) {
-	size_t len = LENGTH(self);
-	return len;
+R__Sexp eval_lang2( R__Sexp self, char* func_name ) {
+	R__Sexp r_func_name, result;
+
+	PROTECT( r_func_name = install(func_name) );
+
+	PROTECT( result = eval(lang2(r_func_name, self), R_GlobalEnv) ); /* TODO UNPROTECT */
+
+	UNPROTECT( 1 ); /* r_func_name */
+
+	return result;
+}
+
+R__Sexp attrib( R__Sexp self, char* name ) {
+	R__Sexp r_name;
+	R__Sexp attr;
+
+	PROTECT( r_name = mkString(name) );
+
+	PROTECT( attr = getAttrib(self, r_name) ); /* UNPROTECT at DESTROY */
+
+	UNPROTECT(1); /* r_name */
+
+	return attr;
 }
 
 char* r_class( R__Sexp self ) {
@@ -42,3 +62,4 @@ char* r_typeof( R__Sexp self ) {
 
 	return strsxp_to_charptr( result );
 }
+
