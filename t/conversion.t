@@ -7,6 +7,7 @@ use PDL;
 use R;
 use Rinterp;
 use R::DataConvert;
+use PDL::Factor;
 
 sub compare {
 	my ($got, $expected, $msg) = @_;
@@ -83,7 +84,9 @@ my $test_data = [
 	  # as.integer(*)
 	  # 19 20  1 20  9 19 20  9  3 19
 	  # Levels: a b c d e f g h i j k l m n o p q r s t u v w x y z
-	  pdl_data => undef, # TODO
+	  pdl_data => PDL::Factor->new(
+		integer => [ qw[19 20 1 20 9 19 20 9 3 19] ],
+		levels => [undef, 'a'..'z'], ),
 	  note => 'factor'},
 
 	{ r_eval => q{
