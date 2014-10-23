@@ -12,17 +12,21 @@ sub convert_r_to_perl {
 		if( $data->R::Sexp::r_class eq 'character' ) {
 			return make_perl_string( $data );
 		} elsif( $data->R::Sexp::r_class eq 'list' ) {
-			return [ map {
-					my $curr = $_;
-					  ref $curr eq 'R__Sexp'
-					? R::DataConvert->convert_r_to_perl($curr)
-					: $curr
-				} @{ make_list( $data ) } ];
+			return make_perl_list( $data );
 		}
 	}
 	die "could not convert";
 }
 
+sub make_perl_list {
+	my ($data) = @_;
+	return [ map {
+			my $curr = $_;
+			  ref $curr eq 'R__Sexp'
+			? R::DataConvert->convert_r_to_perl($curr)
+			: $curr
+		} @{ make_list( $data ) } ];
+}
 
 
 1;

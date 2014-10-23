@@ -25,6 +25,9 @@ sub compare {
 	die "could not compare";
 }
 
+my $factor_data = PDL::Factor->new(
+	integer => [ qw[19 20 1 20 9 19 20 9 3 19] ],
+	levels => [undef, 'a'..'z'], );
 my $test_data = [
 	{ r_eval => q{ array(as.double(0:26), dim=c(3,3,3)) },
 	  r_class => 'array', r_typeof => 'double',
@@ -84,9 +87,7 @@ my $test_data = [
 	  # as.integer(*)
 	  # 19 20  1 20  9 19 20  9  3 19
 	  # Levels: a b c d e f g h i j k l m n o p q r s t u v w x y z
-	  pdl_data => PDL::Factor->new(
-		integer => [ qw[19 20 1 20 9 19 20 9 3 19] ],
-		levels => [undef, 'a'..'z'], ),
+	  pdl_data => $factor_data,
 	  note => 'factor'},
 
 	{ r_eval => q{
@@ -94,7 +95,15 @@ my $test_data = [
                             levels = letters);
               d <- data.frame(x = 1, y = 1:10, fac = ff) },
 	  r_class => 'data.frame', r_typeof => 'list',
-	  perl_data => undef, # TODO
+	  perl_data => do {
+		my $df = Data::Frame->new( columns => {
+				x => ones(10),
+				y => sequence(10)->long + 1,
+				fac => $factor_data,
+			  });
+		$df->row_names( 1..10 );
+		$df;
+	  },
 	  note => 'data frame'},
 
 
@@ -107,6 +116,13 @@ my $test_data = [
 ];
 
 plan tests => scalar @$test_data;
+
+sub mog {
+	my $s = shift;
+	$s =~ s/\$PDL_\d+/\$PDL/msg;
+	$s =~ s/my \$o = \d+/my \$o/msg;
+	$s;
+}
 
 for my $t (@$test_data) {
 	my $r_code = $t->{r_eval};
@@ -123,8 +139,8 @@ for my $t (@$test_data) {
 			compare( $perl_data, $t->{pdl_data}, "PDL data" ) if exists $t->{pdl_data};
 			if( exists $t->{perl_data} ) {
 				use PDL::IO::Dumper;
-				my $s_perl_data = sdump($perl_data);
-				my $s_expected_perl_data = sdump($t->{perl_data});
+				my $s_perl_data = mog sdump($perl_data);
+				my $s_expected_perl_data = mog sdump($t->{perl_data});
 				is( $s_perl_data , $s_expected_perl_data, 'Perl data [compare dump]' );
 
 				# the following throws "multielement piddle in conditional expression"
