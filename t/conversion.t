@@ -96,11 +96,11 @@ my $test_data = [
               d <- data.frame(x = 1, y = 1:10, fac = ff) },
 	  r_class => 'data.frame', r_typeof => 'list',
 	  perl_data => do {
-		my $df = Data::Frame->new( columns => {
+		my $df = Data::Frame->new( columns => [
 				x => ones(10),
 				y => sequence(10)->long + 1,
 				fac => $factor_data,
-			  });
+			  ]);
 		$df->row_names( 1..10 );
 		$df;
 	  },
