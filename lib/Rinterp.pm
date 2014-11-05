@@ -50,6 +50,7 @@ R__Sexp eval_SV( SV* eval_sv ) {
 	PROTECT(eval_expr_v = R_ParseVector(tmp, -1, &status, R_NilValue));
 	if (status != PARSE_OK) {
 		UNPROTECT(2); /* tmp, eval_expr_v */
+		/* TODO throw exception */
 		/*error("invalid call %s", eval_str);*/
 		return R_NilValue_to_Perl;
 	}
