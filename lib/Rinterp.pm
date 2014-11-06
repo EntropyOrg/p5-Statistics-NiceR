@@ -43,6 +43,7 @@ R__Sexp eval_SV( SV* eval_sv ) {
 	ParseStatus status;
 	char* eval_str;
 	int i;
+	int error_occurred;
 
 	eval_str = SvPV_nolen(eval_sv);
 
@@ -57,7 +58,12 @@ R__Sexp eval_SV( SV* eval_sv ) {
 	/* PROTECT(ret = R_tryEval(VECTOR_ELT(e,0), R_GlobalEnv, NULL)); */
 	/* Loop is needed here as EXPSEXP will be of length > 1 */
 	for(i = 0; i < length(eval_expr_v); i++) {
-		ret = eval(VECTOR_ELT(eval_expr_v, i), R_GlobalEnv);
+		ret = R_tryEval(VECTOR_ELT(eval_expr_v, i), R_GlobalEnv, &error_occurred);
+		if( error_occurred ) {
+			UNPROTECT(2); /* tmp, eval_expr_v */
+			/* TODO throw exception */
+			return R_NilValue_to_Perl;
+		}
 	}
 	UNPROTECT(2); /* tmp, eval_expr_v */
 	PROTECT(ret);
