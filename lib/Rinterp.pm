@@ -38,8 +38,8 @@ void _stop_R() {
 	Rf_endEmbeddedR(0);
 }
 
-R__Sexp eval_SV( SV* eval_sv ) {
-	R__Sexp tmp, eval_expr_v, ret;
+SEXP eval_SV( SV* eval_sv ) {
+	SEXP tmp, eval_expr_v, ret;
 	ParseStatus status;
 	char* eval_str;
 	int i;
@@ -55,7 +55,6 @@ R__Sexp eval_SV( SV* eval_sv ) {
 		/*error("invalid call %s", eval_str);*/
 		return R_NilValue_to_Perl;
 	}
-	/* PROTECT(ret = R_tryEval(VECTOR_ELT(e,0), R_GlobalEnv, NULL)); */
 	/* Loop is needed here as EXPSEXP will be of length > 1 */
 	for(i = 0; i < length(eval_expr_v); i++) {
 		ret = R_tryEval(VECTOR_ELT(eval_expr_v, i), R_GlobalEnv, &error_occurred);

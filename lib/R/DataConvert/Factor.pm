@@ -9,8 +9,8 @@ use PDL::Factor;
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
 	if( ref $data ) {
-		if( $data->R::Sexp::r_class eq 'factor' ) {
-			my $r_levels = $data->R::Sexp::attrib( "levels" );
+		if( $data->r_class eq 'factor' ) {
+			my $r_levels = $data->attrib( "levels" );
 			my $levels = R::DataConvert->convert_r_to_perl( $r_levels);
 			# TODO make this cleaner, e.g. give a class override?
 			my $data_int = R::DataConvert::PDL::make_pdl_vector( $data );

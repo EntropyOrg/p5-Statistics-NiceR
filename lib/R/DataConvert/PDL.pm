@@ -38,12 +38,12 @@ for my $type (PDL::Types::typesrtkeys()) {
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
 	if( ref $data ) {
-		if( $data->R::Sexp::r_class eq 'array' ) {
+		if( $data->r_class eq 'array' ) {
 			return make_pdl_array( $data );
-		} elsif( $data->R::Sexp::r_class eq 'matrix' ) {
+		} elsif( $data->r_class eq 'matrix' ) {
 			# TODO does this make sense?
 			return make_pdl_array( $data )->xchg(0,1);
-		} elsif( $data->R::Sexp::r_class =~ /^(integer|numeric)$/  ) {
+		} elsif( $data->r_class =~ /^(integer|numeric)$/  ) {
 			return make_pdl_vector( $data );
 		}
 	}
@@ -75,8 +75,8 @@ __C__
 
 #include "rintutil.c"
 
-R__Sexp make_r_array( pdl* p ) {
-	R__Sexp r_dims, r_array;
+SEXP make_r_array( pdl* p ) {
+	SEXP r_dims, r_array;
 	SV* ret;
 	int dim_i, elem_i;
 {{{
@@ -121,8 +121,8 @@ R__Sexp make_r_array( pdl* p ) {
 	return r_array;
 }
 
-pdl* make_pdl_array( R__Sexp r_array ) {
-	R__Sexp r_dims;
+pdl* make_pdl_array( SEXP r_array ) {
+	SEXP r_dims;
 	size_t ndims;
 	PDL_Indx* dims;
 	pdl* p;
@@ -181,7 +181,7 @@ for my $type (qw(PDL_D PDL_L)) {
 	return p;
 }
 
-pdl* make_pdl_vector( R__Sexp r_vector ) {
+pdl* make_pdl_vector( SEXP r_vector ) {
 	size_t ndims;
 	PDL_Indx* dims;
 	pdl* p;

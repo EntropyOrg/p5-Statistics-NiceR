@@ -10,6 +10,8 @@ use R::DataConvert::DataFrame;
 use R::DataConvert::Factor;
 
 sub convert_r_to_perl {
+	my ($klass, $data) = @_;
+	return unless $data;
 	for my $p (qw(R::DataConvert::PDL R::DataConvert::Perl R::DataConvert::Factor R::DataConvert::DataFrame) ) {
 		my $ret;
 		eval {

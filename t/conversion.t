@@ -113,6 +113,8 @@ my $test_data = [
 # [1] "list"
 # > fitted(k_iris) # S3 method
 
+# TODO test bad values
+
 ];
 
 plan tests => scalar @$test_data;
@@ -147,8 +149,8 @@ for my $t (@$test_data) {
 				#is_deeply( $perl_data, $t->{perl_data}, "Perl data" );
 			}
 		}
-		is( $r_data->R::Sexp::r_class, $t->{r_class}, "class: $t->{r_class}");
-		is( $r_data->R::Sexp::r_typeof, $t->{r_typeof}, "typeof: $t->{r_typeof}");
+		is( $r_data->r_class, $t->{r_class}, "class: $t->{r_class}");
+		is( $r_data->r_typeof, $t->{r_typeof}, "typeof: $t->{r_typeof}");
 	}
 }
 

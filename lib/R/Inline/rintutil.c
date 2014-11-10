@@ -1,8 +1,6 @@
 #ifndef RINTUTIL_H
 #define RINTUTIL_H
 
-typedef SEXP R__Sexp;
-
 #define R_NilValue_to_Perl (&PL_sv_undef)
 
 SEXPTYPE PDL_to_R_type( int pdl_type ) {

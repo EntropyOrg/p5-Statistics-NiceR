@@ -13,8 +13,8 @@ __C__
 
 #include "rintutil.c"
 
-R__Sexp eval_lang2( R__Sexp self, char* func_name ) {
-	R__Sexp r_func_name, result;
+SEXP eval_lang2( SEXP self, char* func_name ) {
+	SEXP r_func_name, result;
 
 	PROTECT( r_func_name = install(func_name) );
 
@@ -25,9 +25,9 @@ R__Sexp eval_lang2( R__Sexp self, char* func_name ) {
 	return result;
 }
 
-R__Sexp attrib( R__Sexp self, char* name ) {
-	R__Sexp r_name;
-	R__Sexp attr;
+SEXP attrib( SEXP self, char* name ) {
+	SEXP r_name;
+	SEXP attr;
 
 	PROTECT( r_name = mkString(name) );
 
@@ -38,7 +38,7 @@ R__Sexp attrib( R__Sexp self, char* name ) {
 	return attr;
 }
 
-char* r_class( R__Sexp self ) {
+char* r_class( SEXP self ) {
 	/* TODO */
 	/* see note about R_data_class in rpy2/rpy/rinterface/sexp.c
 	 *
@@ -50,9 +50,9 @@ char* r_class( R__Sexp self ) {
 		);
 }
 
-char* r_typeof( R__Sexp self ) {
+char* r_typeof( SEXP self ) {
 	/* TODO */
-	R__Sexp r_typeof, result;
+	SEXP r_typeof, result;
 
 	PROTECT( r_typeof = install("typeof") );
 

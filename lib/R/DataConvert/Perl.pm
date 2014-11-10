@@ -9,9 +9,9 @@ use Inline 'C';
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
 	if( ref $data ) {
-		if( $data->R::Sexp::r_class eq 'character' ) {
+		if( $data->r_class eq 'character' ) {
 			return make_perl_string( $data );
-		} elsif( $data->R::Sexp::r_class eq 'list' ) {
+		} elsif( $data->r_class eq 'list' ) {
 			return make_perl_list( $data );
 		}
 	}
@@ -22,7 +22,7 @@ sub make_perl_list {
 	my ($data) = @_;
 	return [ map {
 			my $curr = $_;
-			  ref $curr eq 'R__Sexp'
+			  ref $curr eq 'R::Sexp'
 			? R::DataConvert->convert_r_to_perl($curr)
 			: $curr
 		} @{ make_list( $data ) } ];
@@ -35,7 +35,7 @@ __C__
 
 #include "rintutil.c"
 
-SV* make_perl_string( R__Sexp r_char ) {
+SV* make_perl_string( SEXP r_char ) {
 	size_t len;
 	size_t i;
 	AV* l;
@@ -66,10 +66,10 @@ SV* make_perl_string( R__Sexp r_char ) {
 	return R_NilValue_to_Perl; /* shouldn't get here */
 }
 
-SV* make_list( R__Sexp r_list ) {
+SV* make_list( SEXP r_list ) {
 	size_t len;
 	size_t i;
-	R__Sexp e;
+	SEXP e;
 	SV* sv_tmp;
 	AV* l;
 
@@ -79,9 +79,8 @@ SV* make_list( R__Sexp r_list ) {
 	for( i = 0; i < len; i++ ) {
 		e = VECTOR_ELT(r_list, i);
 
-		/*sv_tmp = newSVrv(e, "R__Sexp");*/
 		sv_tmp = sv_newmortal();
-		sv_setref_pv(sv_tmp, "R__Sexp", (void*)e); /* TODO fix the classname */
+		sv_setref_pv(sv_tmp, "R::Sexp", (void*)e);
 
 		av_store(l, i, SvREFCNT_inc(sv_tmp));
 	}

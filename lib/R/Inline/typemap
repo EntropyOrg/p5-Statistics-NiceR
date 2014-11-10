@@ -1,1 +1,20 @@
-R__Sexp T_PTROBJ
+SEXP T_PTRSEXP
+
+#############################################################################
+INPUT
+
+T_PTRSEXP
+        if (SvROK($arg) && sv_derived_from($arg, \"R::Sexp\")) {
+            IV tmp = SvIV((SV*)SvRV($arg));
+            $var = INT2PTR($type,tmp);
+        }
+        else
+            Perl_croak(aTHX_ \"%s: %s is not of type %s\",
+                        ${$ALIAS?\q[GvNAME(CvGV(cv))]:\qq[\"$pname\"]},
+                        \"$var\", \"R::Sexp\")
+
+#############################################################################
+OUTPUT
+
+T_PTRSEXP
+        sv_setref_pv($arg, \"R::Sexp\", (void*)$var);
