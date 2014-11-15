@@ -1,6 +1,5 @@
 package R::Inline::Rutil;
 
-use FindBin;
 use strict;
 use warnings;
 use File::Basename;
