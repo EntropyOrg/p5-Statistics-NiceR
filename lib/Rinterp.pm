@@ -69,3 +69,65 @@ SEXP eval_SV( SV* eval_sv ) {
 
 	return ret;
 }
+
+SEXP R_get_function(char* fname) {
+	return Rf_install(fname);
+}
+
+
+SEXP R_call_function(SEXP function, AV* args) {
+	SEXP e; /* expression */
+	SEXP next; /* pairlist iterator */
+	SV* arg_sv; /* SV container for SEXP */
+	SEXP arg; /* current argument */
+	SEXP ret; /* return value */
+	int error_occurred; /* error checking boolean */
+
+	int num_args; /* number of arguments */
+	int arg_idx; /* argument list iterator */
+
+	IV arg_int; /* XXX */
+	SEXP arg_int_sexp; /* XXX */
+
+	/* TODO check svtype for args == AV */
+	num_args = av_len( args ) + 1;
+
+	printf("args = %d\n", num_args);
+
+	/* (num_args + 1) slots: function name + args */
+	PROTECT(e = allocVector(LANGSXP, num_args + 1));
+
+	SETCAR(e, function); /* function at the beginning of the list */
+	if( num_args > 0 ) {
+		next = CDR(e); /* begin argument list */
+
+		for( arg_idx = 0; arg_idx < num_args; arg_idx++ ) {
+			arg_sv = *( av_fetch( args, arg_idx, 0 ) );
+			arg_int = SvIV( arg_sv );
+			PROTECT( arg_int_sexp = allocVector(INTSXP, 1) );
+			INTEGER(arg_int_sexp)[0] = arg_int;
+			arg = arg_int_sexp;
+
+			/* key is for using calls with arg names */
+			//val = hv_iternextsv(hv, &key, &len);
+			/* TODO  deal with keys */
+
+			SETCAR(next, arg);
+
+			/* TODO deal with keys */
+			/*if(key && key[0]) {
+				SET_TAG(next, Rf_install(key));
+			}*/
+
+			next = CDR(next);
+		}
+	}
+	/*DEBUG*/Rf_PrintValue(e);
+
+	ret = R_tryEval(e, R_GlobalEnv, &error_occurred );
+	if( error_occurred ) {
+		/* TODO error checking */
+		return R_NilValue_to_Perl;
+	}
+	PROTECT(ret);
+}
