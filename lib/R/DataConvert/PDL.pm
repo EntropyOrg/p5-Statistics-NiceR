@@ -7,24 +7,21 @@ use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
 use File::Slurp;
 use PDL::Types;
 use Text::Template;
+use R::Inline::TypeInfo;
+use Storable;
 
-my $charsxp = { sexptype => 'CHARSXP', r_macro => 'CHARACTER',                      };
-my $intsxp  = { sexptype => 'INTSXP',  r_macro => 'INTEGER',   r_NA => 'NA_INTEGER' };
-my $realxsp = { sexptype => 'REALSXP', r_macro => 'REAL',      r_NA => 'NA_REAL'    };
-# NA_REAL, NA_INTEGER, NA_LOGICAL, NA_STRING
-#
-# NA_COMPLEX, NA_CHARACTER?
+sub _type_helper { Storable::dclone( R::Inline::TypeInfo->get_type_info( $_[0] ) ); } # make a copy of hash
 my $pdl_to_r = {
-		PDL_B   => { %$charsxp },
+		PDL_B   => _type_helper('CHARSXP'),
 
-		PDL_S   => { %$intsxp },
-		PDL_US  => { %$intsxp },
-		PDL_L   => { %$intsxp },
-		PDL_IND => { %$intsxp },
-		PDL_LL  => { %$intsxp },
+		PDL_S   => _type_helper('INTSXP'),
+		PDL_US  => _type_helper('INTSXP'),
+		PDL_L   => _type_helper('INTSXP'),
+		PDL_IND => _type_helper('INTSXP'),
+		PDL_LL  => _type_helper('INTSXP'),
 
-		PDL_F   => { %$realxsp },
-		PDL_D   => { %$realxsp },
+		PDL_F   => _type_helper('REALSXP'),
+		PDL_D   => _type_helper('REALSXP'),
 };
 for my $type (PDL::Types::typesrtkeys()) {
 	$pdl_to_r->{$type}{ctype} = PDL::Types::typefld($type, 'ctype');
