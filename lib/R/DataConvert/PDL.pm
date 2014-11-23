@@ -8,9 +8,8 @@ use File::Slurp;
 use PDL::Types;
 use Text::Template;
 use R::Inline::TypeInfo;
-use Storable;
 
-sub _type_helper { Storable::dclone( R::Inline::TypeInfo->get_type_info( $_[0] ) ); } # make a copy of hash
+sub _type_helper { R::Inline::TypeInfo->get_type_info($_[0]); }
 my $pdl_to_r = {
 		PDL_B   => _type_helper('CHARSXP'),
 
@@ -26,11 +25,6 @@ my $pdl_to_r = {
 for my $type (PDL::Types::typesrtkeys()) {
 	$pdl_to_r->{$type}{ctype} = PDL::Types::typefld($type, 'ctype');
 }
-
-# TODO
-
-# TODO R PP macro (PDL::PP::Rule::Substitute)?
-
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;

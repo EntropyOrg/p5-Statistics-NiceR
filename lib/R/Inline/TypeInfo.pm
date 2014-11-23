@@ -2,6 +2,7 @@ package R::Inline::TypeInfo;
 
 use strict;
 use warnings;
+use Storable;
 
 my $info = {
 	CHARSXP => { sexptype => 'CHARSXP', r_macro => 'CHARACTER',                      },
@@ -14,5 +15,6 @@ my $info = {
 
 sub get_type_info {
 	my ($klass, $type ) = @_;
-	return $info->{$type};
+	# make a copy of hash so that changes made by callers do not affect our data
+	return Storable::dclone( $info->{$type} );
 }
