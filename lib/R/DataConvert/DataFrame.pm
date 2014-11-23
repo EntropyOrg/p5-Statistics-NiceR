@@ -19,7 +19,7 @@ sub convert_r_to_perl {
 sub convert_r_to_perl_dataframe {
 	my ($self, $data) = @_;
 
-	my $data_list = R::DataConvert::Perl::make_perl_list( $data );
+	my $data_list = R::DataConvert::Perl->convert_r_to_perl_vecsxp( $data );
 	my $col_names = R::DataConvert->convert_r_to_perl($data->attrib( "names" ));
 	my $row_names = R::DataConvert->convert_r_to_perl($data->attrib( "row.names" ));
 	my $colspec = [ map {

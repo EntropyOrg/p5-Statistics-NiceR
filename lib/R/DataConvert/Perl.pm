@@ -10,22 +10,31 @@ sub convert_r_to_perl {
 	my ($self, $data) = @_;
 	if( ref $data ) {
 		if( $data->r_class eq 'character' ) {
-			return make_perl_string( $data );
+			return convert_r_to_perl_charsxp(@_);
 		} elsif( $data->r_class eq 'list' ) {
-			return make_perl_list( $data );
+			return convert_r_to_perl_vecsxp(@_);
 		}
 	}
 	die "could not convert";
 }
 
-sub make_perl_list {
-	my ($data) = @_;
+sub convert_r_to_perl_charsxp {
+	my ($self, $data) = @_;
+	return make_perl_string( $data );
+}
+
+sub convert_r_to_perl_vecsxp {
+	my ($self, $data) = @_;
 	return [ map {
 			my $curr = $_;
 			  ref $curr eq 'R::Sexp'
 			? R::DataConvert->convert_r_to_perl($curr)
 			: $curr
 		} @{ make_list( $data ) } ];
+}
+
+sub convert_perl_to_r {
+	...
 }
 
 
