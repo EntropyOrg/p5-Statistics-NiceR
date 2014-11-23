@@ -6,7 +6,7 @@ use warnings;
 use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
 use Inline 'C';
 
-use overload '""' => \&string;
+#use overload '""' => \&string;
 
 sub string {
 	my ($self) = @_;
