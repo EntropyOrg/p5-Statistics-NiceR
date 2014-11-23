@@ -6,6 +6,13 @@ use warnings;
 use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
 use Inline 'C';
 
+use overload '""' => \&string;
+
+sub string {
+	my ($self) = @_;
+	return $self->_string;
+}
+
 1;
 
 __DATA__
@@ -63,3 +70,7 @@ char* r_typeof( SEXP self ) {
 	return strsxp_to_charptr( result );
 }
 
+char* _string( SEXP self ) {
+	Rf_PrintValue( self );
+	return ""; /* TODO use the R output hooks to redirect print messages to string, c.f. R_INTERFACE_PTRS, ptr_R_ */
+}
