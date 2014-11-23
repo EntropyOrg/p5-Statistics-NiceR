@@ -39,16 +39,39 @@ sub convert_r_to_perl {
 	my ($self, $data) = @_;
 	if( ref $data ) {
 		if( $data->r_class eq 'array' ) {
-			return make_pdl_array( $data );
+			return convert_r_to_perl_array(@_);
 		} elsif( $data->r_class eq 'matrix' ) {
-			# TODO does this make sense?
-			return make_pdl_array( $data )->xchg(0,1);
-		} elsif( $data->r_class =~ /^(integer|numeric)$/  ) {
-			return make_pdl_vector( $data );
+			return convert_r_to_perl_matrix(@_);
+		} elsif( $data->r_class eq 'integer' ) {
+			return convert_r_to_perl_intsxp(@_);
+		} elsif( $data->r_class eq 'numeric' ) {
+			return convert_r_to_perl_realsxp(@_);
 		}
 	}
 	die "could not convert";
 }
+
+sub convert_r_to_perl_array {
+	my ($self, $data) = @_;
+	return make_pdl_array( $data );
+}
+
+sub convert_r_to_perl_matrix {
+	my ($self, $data) = @_;
+	# TODO does this make sense?
+	return make_pdl_array( $data )->xchg(0,1);
+}
+
+sub convert_r_to_perl_intsxp {
+	my ($self, $data) = @_;
+	return make_pdl_vector( $data );
+}
+
+sub convert_r_to_perl_realsxp {
+	my ($self, $data) = @_;
+	return make_pdl_vector( $data );
+}
+
 
 sub convert_perl_to_r {
 	my ($self, $data) = @_;
