@@ -10,14 +10,14 @@ sub convert_r_to_perl {
 	my ($self, $data) = @_;
 	if( ref $data ) {
 		if( $data->r_class eq 'data.frame' ) {
-			return make_data_frame($data);
+			return convert_r_to_perl_dataframe(@_);
 		}
 	}
 	die "could not convert";
 }
 
-sub make_data_frame {
-	my ($data) = @_;
+sub convert_r_to_perl_dataframe {
+	my ($self, $data) = @_;
 
 	my $data_list = R::DataConvert::Perl::make_perl_list( $data );
 	my $col_names = R::DataConvert->convert_r_to_perl($data->attrib( "names" ));
