@@ -5,12 +5,16 @@ use warnings;
 
 use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
 use Inline 'C';
+use Capture::Tiny qw(capture_stdout);
 
-#use overload '""' => \&string;
+use overload '""' => \&string;
 
 sub string {
 	my ($self) = @_;
-	return $self->_string;
+	my $str = capture_stdout {
+		$self->_string;
+	};
+	return $str;
 }
 
 1;
