@@ -24,3 +24,8 @@ Problems to solve
 	a good way to represent R objects in Perl
 		; data.frame()
 	PDL support
+
+args
+	use List::AllUtils qw(pairmap);
+	$h = { a => 1, b => 2 };
+	@kv_pairs = pairmap {  [ $a, $b ] } %$h;
