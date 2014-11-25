@@ -9,6 +9,8 @@ use PDL::Types;
 use Text::Template;
 use R::Inline::TypeInfo;
 
+## START OF Inline processing
+
 sub _type_helper { R::Inline::TypeInfo->get_type_info($_[0]); }
 my $pdl_to_r = {
 		PDL_B   => _type_helper('CHARSXP'),
@@ -25,6 +27,17 @@ my $pdl_to_r = {
 for my $type (PDL::Types::typesrtkeys()) {
 	$pdl_to_r->{$type}{ctype} = PDL::Types::typefld($type, 'ctype');
 }
+
+# read in template and fill
+my $template_string = read_file(\*DATA);
+$template_string =~ s/^__C__$//msg;
+my $template = Text::Template->new(
+	TYPE => 'STRING', SOURCE => $template_string,
+	DELIMITERS => ['{{{', '}}}'], );
+Inline->bind( C => $template->fill_in( HASH => { pdl_to_r => \$pdl_to_r }  ) );
+
+
+## END OF Inline processing
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
@@ -73,15 +86,6 @@ sub convert_perl_to_r {
 	}
 	die "could not convert";
 }
-
-# read in template and fill
-my $template_string = read_file(\*DATA);
-$template_string =~ s/^__C__$//msg;
-my $template = Text::Template->new(
-	TYPE => 'STRING', SOURCE => $template_string,
-	DELIMITERS => ['{{{', '}}}'], );
-Inline->bind( C => $template->fill_in( HASH => { pdl_to_r => \$pdl_to_r }  ) );
-
 
 1;
 __DATA__
