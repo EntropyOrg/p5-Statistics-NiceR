@@ -4,7 +4,11 @@ use strict;
 use warnings;
 
 use Inline with => qw(R::Inline::Rinline R::Inline::Rutil);
+use PDL; # XXX using PDL
 use Inline 'C';
+use Scalar::Util qw(reftype);
+use Scalar::Util::Numeric qw(isint isfloat);
+use List::AllUtils;
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
@@ -34,7 +38,58 @@ sub convert_r_to_perl_vecsxp {
 }
 
 sub convert_perl_to_r {
-	...
+	my ($self, $data) = @_;
+	if( ref $data and $data->isa('R::Sexp') ) {
+		return convert_perl_to_r_sexp(@_);
+	} elsif( isint($data) ) {
+		return convert_perl_to_r_integer(@_);
+	} elsif( isfloat($data) ) {
+		return convert_perl_to_r_float(@_);
+	} else {
+		if( ref $data ) {
+			if( reftype($data) eq 'ARRAY' ) {
+				if( List::AllUtils::all { isint($_) } @$data ) {
+					return convert_perl_to_r_integer(@_);
+				} elsif( List::AllUtils::all { isfloat($_) } @$data ) {
+					return convert_perl_to_r_float(@_);
+				} else {
+					return convert_perl_to_r_array(@_);
+				}
+			} elsif( reftype($data) eq 'HASH' ) {
+				# use R's env()
+				...
+			} elsif( reftype($data) eq 'SCALAR' ) {
+				# boolean, Data::Perl, etc.
+				...
+			}
+		} else {
+			# scalar (not a reference), string
+			# XXX I think
+			...
+		}
+	}
+	die "could not convert";
+}
+
+sub convert_perl_to_r_array {
+	...  # make an R list (recursively)
+}
+
+sub convert_perl_to_r_sexp {
+	my ($self, $data) = @_;
+	return $data;
+}
+
+sub convert_perl_to_r_integer {
+	my ($self, $data) = @_;
+	# XXX using PDL
+	R::DataConvert::PDL->convert_r_to_perl( long($data) );
+}
+
+sub convert_perl_to_r_float {
+	my ($self, $data) = @_;
+	# XXX using PDL
+	R::DataConvert::PDL->convert_r_to_perl( double($data) );
 }
 
 
