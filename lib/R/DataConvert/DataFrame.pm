@@ -5,6 +5,7 @@ use warnings;
 
 use R::DataConvert::PDL;
 use Data::Frame;
+use Scalar::Util qw(blessed);
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
@@ -31,7 +32,11 @@ sub convert_r_to_perl_dataframe {
 }
 
 sub convert_perl_to_r {
-	...
+	my ($self, $data) = @_;
+	if( blessed($data) && $data->isa('Data::Frame') ) {
+		...
+	}
+	die "could not convert";
 }
 
 1;
