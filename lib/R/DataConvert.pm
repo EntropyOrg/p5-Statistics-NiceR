@@ -31,7 +31,7 @@ sub check_r_sexp {
 }
 
 sub convert_perl_to_r {
-	for my $p (qw(R::DataConvert::PDL R::DataConvert::Perl R::DataConvert::Factor R::DataConvert::DataFrame) ) {
+	for my $p (qw(R::DataConvert::Factor R::DataConvert::PDL R::DataConvert::DataFrame R::DataConvert::Perl) ) {
 		my $ret;
 		eval {
 			no strict 'refs';
