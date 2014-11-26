@@ -8,7 +8,7 @@ use PDL::Factor;
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
-	if( ref $data ) {
+	if( R::DataConvert->check_r_sexp($data) ) {
 		if( $data->r_class eq 'factor' ) {
 			return convert_r_to_perl_factor(@_);
 		}

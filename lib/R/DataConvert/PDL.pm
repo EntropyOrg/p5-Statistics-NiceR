@@ -41,7 +41,7 @@ Inline->bind( C => $template->fill_in( HASH => { pdl_to_r => \$pdl_to_r }  ) );
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
-	if( ref $data ) {
+	if( R::DataConvert->check_r_sexp($data) ) {
 		if( $data->r_class eq 'array' ) {
 			return convert_r_to_perl_array(@_);
 		} elsif( $data->r_class eq 'matrix' ) {
@@ -79,7 +79,7 @@ sub convert_r_to_perl_realsxp {
 
 sub convert_perl_to_r {
 	my ($self, $data) = @_;
-	if( ref $data ) {
+	if( blessed $data ) {
 		if( $data->isa('PDL') ) {
 			return make_r_array( $data );
 		}

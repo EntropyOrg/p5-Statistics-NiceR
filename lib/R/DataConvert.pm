@@ -8,10 +8,11 @@ use R::DataConvert::PDL;
 use R::DataConvert::Perl;
 use R::DataConvert::DataFrame;
 use R::DataConvert::Factor;
+use Scalar::Util qw(blessed);
 
 sub convert_r_to_perl {
 	my ($klass, $data) = @_;
-	return unless $data;
+	return unless $klass->check_r_sexp($data);
 	for my $p (qw(R::DataConvert::PDL R::DataConvert::Perl R::DataConvert::Factor R::DataConvert::DataFrame) ) {
 		my $ret;
 		eval {
@@ -22,6 +23,11 @@ sub convert_r_to_perl {
 		die $@ unless( $@ =~ /could not convert/ );
 	}
 	die $@; # TODO rethrow
+}
+
+sub check_r_sexp {
+	my ($klass, $data) = @_;
+	blessed $data && $data->isa('R::Sexp')
 }
 
 sub convert_perl_to_r {
