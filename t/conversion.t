@@ -167,6 +167,21 @@ for my $t (@$test_data) {
 		}
 		is( $r_data->r_class, $t->{r_class}, "class: $t->{r_class}");
 		is( $r_data->r_typeof, $t->{r_typeof}, "typeof: $t->{r_typeof}");
+
+		for my $key ( qw( pdl_data perl_data) ) {
+			next unless exists $t->{$key};
+			my $converted_r_data;
+			eval {
+				$converted_r_data = R::DataConvert->convert_perl_to_r( $t->{$key} ); 1
+			} or ok(0, "conversion failed: $@");
+			my $conversion_to_r = !$@;
+
+			if( $conversion_to_r ) {
+				is( $r_data->op_equal_all($converted_r_data), 'converted Perl to R' );
+				note $converted_r_data;
+			}
+
+		}
 	}
 }
 
