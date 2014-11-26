@@ -11,9 +11,11 @@ use overload '""' => \&string;
 
 sub string {
 	my ($self) = @_;
+	# TODO change this to properly use R's callbacks instead of Capture::Tiny
 	my $str = capture_stdout {
 		$self->_string;
 	};
+	$str =~ s/\n$//s;
 	return $str;
 }
 
