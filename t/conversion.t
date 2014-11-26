@@ -44,10 +44,15 @@ sub compare_pdl {
 
 sub compare_perl {
 	my ($got, $expected, $msg) = @_;
-	use PDL::IO::Dumper;
-	my $s_perl_data = mog sdump($got);
-	my $s_expected_perl_data = mog sdump($expected);
-	is( $s_perl_data , $s_expected_perl_data, "$msg: Perl data [compare dump]" );
+	if( blessed($got) && $got->isa('Data::Frame') ) {
+		# stringify Data::Frame's
+		is( "$got", "$expected", "$msg: Perl data [compare dump]");
+	} else {
+		use PDL::IO::Dumper;
+		my $s_perl_data = mog sdump($got);
+		my $s_expected_perl_data = mog sdump($expected);
+		is( $s_perl_data , $s_expected_perl_data, "$msg: Perl data [compare dump]" );
+	}
 
 	# the following throws "multielement piddle in conditional expression"
 	#is_deeply( $perl_data, $t->{perl_data}, "Perl data" );
