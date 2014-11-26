@@ -8,6 +8,7 @@ use File::Slurp;
 use PDL::Types;
 use Text::Template;
 use R::Inline::TypeInfo;
+use Scalar::Util qw(blessed);
 
 ## START OF Inline processing
 

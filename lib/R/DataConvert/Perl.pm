@@ -39,7 +39,7 @@ sub convert_r_to_perl_vecsxp {
 
 sub convert_perl_to_r {
 	my ($self, $data) = @_;
-	if( blessed $data && $data->isa('R::Sexp') ) {
+	if( R::DataConvert->check_r_sexp($data) ) {
 		return convert_perl_to_r_sexp(@_);
 	} elsif( isint($data) ) {
 		return convert_perl_to_r_integer(@_);
