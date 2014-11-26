@@ -28,4 +28,8 @@ sub convert_r_to_perl_factor {
 	return $f;
 }
 
+sub convert_perl_to_r {
+	...
+}
+
 1;

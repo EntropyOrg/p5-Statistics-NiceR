@@ -30,4 +30,8 @@ sub convert_r_to_perl_dataframe {
 	return $df;
 }
 
+sub convert_perl_to_r {
+	...
+}
+
 1;
