@@ -177,7 +177,7 @@ for my $t (@$test_data) {
 			my $conversion_to_r = !$@;
 
 			if( $conversion_to_r ) {
-				is( $r_data->op_equal_all($converted_r_data), 'converted Perl to R' );
+				ok( $r_data->op_equal_all($converted_r_data), 'converted Perl to R' );
 				note $converted_r_data;
 			}
 
