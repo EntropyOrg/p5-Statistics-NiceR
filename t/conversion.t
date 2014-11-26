@@ -183,6 +183,8 @@ for my $t (@$test_data) {
 
 			if( $conversion_to_r ) {
 				ok( $r_data->op_equal_all($converted_r_data), 'converted Perl to R' );
+				is( $converted_r_data->r_class, $t->{r_class}, "Perl->R class: $t->{r_class}");
+				is( $converted_r_data->r_typeof, $t->{r_typeof}, "Perl->R typeof: $t->{r_typeof}");
 				note $converted_r_data;
 			}
 
