@@ -8,8 +8,25 @@ use R;
 use Rinterp;
 use R::DataConvert;
 use PDL::Factor;
+use Scalar::Util qw(blessed);
+
+sub mog {
+	my $s = shift;
+	$s =~ s/\$PDL_\d+/\$PDL/msg;
+	$s =~ s/my \$o = \d+/my \$o/msg;
+	$s;
+}
 
 sub compare {
+	my ($got, $expected) = @_;
+	if( blessed $expected && $expected->isa('PDL') ) {
+		compare_pdl(@_);
+	} else {
+		compare_perl(@_);
+	}
+}
+
+sub compare_pdl {
 	my ($got, $expected, $msg) = @_;
 	if( ref $expected ) {
 		if( $expected->isa('PDL') ) {
@@ -23,6 +40,17 @@ sub compare {
 		} 
 	}
 	die "could not compare";
+}
+
+sub compare_perl {
+	my ($got, $expected, $msg) = @_;
+	use PDL::IO::Dumper;
+	my $s_perl_data = mog sdump($got);
+	my $s_expected_perl_data = mog sdump($expected);
+	is( $s_perl_data , $s_expected_perl_data, "$msg: Perl data [compare dump]" );
+
+	# the following throws "multielement piddle in conditional expression"
+	#is_deeply( $perl_data, $t->{perl_data}, "Perl data" );
 }
 
 my $factor_data = PDL::Factor->new(
@@ -119,13 +147,6 @@ my $test_data = [
 
 plan tests => scalar @$test_data;
 
-sub mog {
-	my $s = shift;
-	$s =~ s/\$PDL_\d+/\$PDL/msg;
-	$s =~ s/my \$o = \d+/my \$o/msg;
-	$s;
-}
-
 for my $t (@$test_data) {
 	my $r_code = $t->{r_eval};
 
@@ -135,18 +156,13 @@ for my $t (@$test_data) {
 		eval {
 			$perl_data = R::DataConvert->convert_r_to_perl( $r_data ); 1
 		} or ok(0, "conversion failed: $@");
-		my $conversion = !$@;
+		my $conversion_to_perl = !$@;
 
-		if( $conversion ) {
-			compare( $perl_data, $t->{pdl_data}, "PDL data" ) if exists $t->{pdl_data};
-			if( exists $t->{perl_data} ) {
-				use PDL::IO::Dumper;
-				my $s_perl_data = mog sdump($perl_data);
-				my $s_expected_perl_data = mog sdump($t->{perl_data});
-				is( $s_perl_data , $s_expected_perl_data, 'Perl data [compare dump]' );
-
-				# the following throws "multielement piddle in conditional expression"
-				#is_deeply( $perl_data, $t->{perl_data}, "Perl data" );
+		if( $conversion_to_perl ) {
+			for my $key ( qw(pdl_data perl_data) ) {
+				if( exists $t->{$key} ) {
+					compare( $perl_data, $t->{$key}, $key);
+				}
 			}
 		}
 		is( $r_data->r_class, $t->{r_class}, "class: $t->{r_class}");
