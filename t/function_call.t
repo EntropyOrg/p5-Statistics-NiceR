@@ -4,8 +4,6 @@ use strict;
 use warnings;
 
 use R;
-use Rinterp;
-use R::Sexp;
 
 my $function = Rinterp::R_get_function("rnorm");
 
