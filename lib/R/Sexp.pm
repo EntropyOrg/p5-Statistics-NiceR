@@ -30,18 +30,25 @@ int op_equal_all(SEXP self, SEXP other) {
 	SEXP r_equal, r_all;
 	SEXP r_equal_lang, r_all_lang;
 	SEXP r_eq_logical;
-	int result;
+	int result; /* boolean */
+	int error_occurred; /* error checking boolean */
 
 	PROTECT( r_equal = install("==") );
 	PROTECT( r_all = install("all") );
 	PROTECT( r_equal_lang = lang3( r_equal, self, other) );
 	PROTECT( r_all_lang = lang2( r_all, r_equal_lang ) );
 
-	PROTECT( r_eq_logical = eval( r_all_lang, R_GlobalEnv) );
+	PROTECT( r_eq_logical = R_tryEval( r_all_lang, R_GlobalEnv, &error_occurred) );
+
+	/* TODO handle error_occurred */
 
 	UNPROTECT(4); /* r_equal, r_all, r_equal_lang, r_all_lang */
 
-	result = INTEGER(r_eq_logical)[0];
+	if( error_occurred ) {
+		result = 0; /* FALSE */
+	} else {
+		result = INTEGER(r_eq_logical)[0];
+	}
 
 	UNPROTECT(1); /* r_eq_logical */
 
