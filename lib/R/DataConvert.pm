@@ -38,6 +38,7 @@ sub convert_perl_to_r {
 			$ret = &{"${p}::convert_perl_to_r"}(@_);
 			1;
 		} and return $ret;
+		die $@ unless( $@ =~ /could not convert/ );
 	}
 	die $@; # TODO rethrow
 }
