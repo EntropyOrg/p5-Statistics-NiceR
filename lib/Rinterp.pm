@@ -125,6 +125,7 @@ SEXP R_call_function(SEXP function, AV* args) {
 	/*DEBUG*/Rf_PrintValue(e);
 
 	ret = R_tryEval(e, R_GlobalEnv, &error_occurred );
+	UNPROTECT(1); /* e */
 	if( error_occurred ) {
 		/* TODO error checking */
 		return R_NilValue_to_Perl;
