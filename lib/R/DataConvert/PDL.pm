@@ -80,7 +80,7 @@ sub convert_r_to_perl_realsxp {
 
 sub convert_perl_to_r {
 	my ($self, $data) = @_;
-	if( blessed $data ) {
+	if( blessed($data) ) {
 		if( $data->isa('PDL') ) {
 			return make_r_array( $data );
 		}

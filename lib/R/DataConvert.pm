@@ -27,7 +27,7 @@ sub convert_r_to_perl {
 
 sub check_r_sexp {
 	my ($klass, $data) = @_;
-	blessed $data && $data->isa('R::Sexp')
+	blessed($data) && $data->isa('R::Sexp')
 }
 
 sub convert_perl_to_r {
