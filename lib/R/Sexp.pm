@@ -26,6 +26,28 @@ __C__
 
 #include "rintutil.c"
 
+int op_equal_all(SEXP self, SEXP other) {
+	SEXP r_equal, r_all;
+	SEXP r_equal_lang, r_all_lang;
+	SEXP r_eq_logical;
+	int result;
+
+	PROTECT( r_equal = install("==") );
+	PROTECT( r_all = install("all") );
+	PROTECT( r_equal_lang = lang3( r_equal, self, other) );
+	PROTECT( r_all_lang = lang2( r_all, r_equal_lang ) );
+
+	PROTECT( r_eq_logical = eval( r_all_lang, R_GlobalEnv) );
+
+	UNPROTECT(4); /* r_equal, r_all, r_equal_lang, r_all_lang */
+
+	result = INTEGER(r_eq_logical)[0];
+
+	UNPROTECT(1); /* r_eq_logical */
+
+	return result;
+}
+
 SEXP eval_lang2( SEXP self, char* func_name ) {
 	SEXP r_func_name, result;
 
