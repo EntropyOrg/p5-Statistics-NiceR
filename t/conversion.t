@@ -141,6 +141,7 @@ my $test_data = [
 	  note => 'data frame'},
 
 
+
 # TODO:
 # >  k_iris <- kmeans( iris[,-5], centers=3 ); class(k_iris); typeof(k_iris)
 # [1] "kmeans"
@@ -148,6 +149,12 @@ my $test_data = [
 # > fitted(k_iris) # S3 method
 
 # TODO test bad values
+
+# TODO test empty lists
+
+# TODO test empty PDL
+# TODO test empty arrayref
+# TODO test empty R type: integer(), numeric(), list()
 
 ];
 
@@ -183,7 +190,7 @@ for my $t (@$test_data) {
 			my $conversion_to_r = !$@;
 
 			if( $conversion_to_r ) {
-				my $is_eq = ok( $r_data->op_equal_all($converted_r_data), 'converted Perl to R' );
+				my $is_eq = ok( $r_data->op_equal_all($converted_r_data), 'converted Perl to R: all equality' );
 				is( $converted_r_data->r_class, $t->{r_class}, "Perl->R class: $t->{r_class}");
 				is( $converted_r_data->r_typeof, $t->{r_typeof}, "Perl->R typeof: $t->{r_typeof}");
 
