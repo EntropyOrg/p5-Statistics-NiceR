@@ -79,15 +79,13 @@ SEXP R_call_function(SEXP function, AV* args) {
 	SEXP e; /* expression */
 	SEXP next; /* pairlist iterator */
 	SV* arg_sv; /* SV container for SEXP */
+	IV arg_intptr; /* integer pointer to SEXP */
 	SEXP arg; /* current argument */
 	SEXP ret; /* return value */
 	int error_occurred; /* error checking boolean */
 
 	int num_args; /* number of arguments */
 	int arg_idx; /* argument list iterator */
-
-	IV arg_int; /* XXX */
-	SEXP arg_int_sexp; /* XXX */
 
 	/* TODO check svtype for args == AV */
 	num_args = av_len( args ) + 1;
@@ -103,10 +101,8 @@ SEXP R_call_function(SEXP function, AV* args) {
 
 		for( arg_idx = 0; arg_idx < num_args; arg_idx++ ) {
 			arg_sv = *( av_fetch( args, arg_idx, 0 ) );
-			arg_int = SvIV( arg_sv );
-			PROTECT( arg_int_sexp = allocVector(INTSXP, 1) );
-			INTEGER(arg_int_sexp)[0] = arg_int;
-			arg = arg_int_sexp;
+			arg_intptr = SvIV( (SV*) SvRV(arg_sv) ); /* get integer pointer out of SV */
+			arg = INT2PTR(SEXP, arg_intptr ); /* cast the integer to a pointer */
 
 			/* key is for using calls with arg names */
 			//val = hv_iternextsv(hv, &key, &len);
@@ -122,7 +118,7 @@ SEXP R_call_function(SEXP function, AV* args) {
 			next = CDR(next);
 		}
 	}
-	/*DEBUG*/Rf_PrintValue(e);
+	/*[>DEBUG<]Rf_PrintValue(e);*/
 
 	ret = R_tryEval(e, R_GlobalEnv, &error_occurred );
 	UNPROTECT(1); /* e */
