@@ -69,7 +69,7 @@ my $test_data = [
 
 	{ r_eval => q{ array(0:26, dim=c(3,3,3)) },
 	  r_class => 'array', r_typeof => 'integer',
-	  pdl_data => sequence(3,3,3),
+	  pdl_data => sequence(long,3,3,3),
 	  note => 'n-d array of integers' },
 
 	{ r_eval => q{ c(3,2,1) },
@@ -79,7 +79,7 @@ my $test_data = [
 
 	{ r_eval => q{ as.integer(c(3,2,1)) },
 	  r_class => 'integer', r_typeof => 'integer',
-	  pdl_data => pdl(3,2,1),
+	  pdl_data => long(3,2,1),
 	  note => 'vector of integers' },
 
 	{ r_eval => q{
