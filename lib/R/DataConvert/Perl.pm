@@ -47,6 +47,7 @@ sub convert_perl_to_r {
 		return convert_perl_to_r_float(@_);
 	} else {
 		if( blessed($data) ) {
+			# boolean, Data::Perl, etc.
 			...
 		} elsif( ref $data ) {
 			if( reftype($data) eq 'ARRAY' ) {
@@ -64,7 +65,6 @@ sub convert_perl_to_r {
 				# use R's env()
 				...
 			} elsif( reftype($data) eq 'SCALAR' ) {
-				# boolean, Data::Perl, etc.
 				...
 			}
 		} else {
