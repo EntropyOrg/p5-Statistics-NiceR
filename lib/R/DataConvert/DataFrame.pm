@@ -6,6 +6,7 @@ use warnings;
 use R::DataConvert::PDL;
 use Data::Frame;
 use Scalar::Util qw(blessed);
+use List::AllUtils;
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
@@ -23,9 +24,7 @@ sub convert_r_to_perl_dataframe {
 	my $data_list = R::DataConvert::Perl->convert_r_to_perl_vecsxp( $data );
 	my $col_names = R::DataConvert->convert_r_to_perl($data->attrib( "names" ));
 	my $row_names = R::DataConvert->convert_r_to_perl($data->attrib( "row.names" ));
-	my $colspec = [ map {
-			( $col_names->[$_] => $data_list->[$_] )
-		} 0..@$col_names-1 ];
+	my $colspec = [ List::AllUtils::mesh @$col_names, @$data_list ];
 	my $df = Data::Frame->new( columns => $colspec );
 	$df->row_names( $row_names );
 	return $df;
