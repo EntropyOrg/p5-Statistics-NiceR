@@ -70,12 +70,12 @@ SEXP eval_SV( SV* eval_sv ) {
 	return ret;
 }
 
-SEXP R_get_function(char* fname) {
+SEXP R_get_function(SV* self, char* fname) {
 	return Rf_install(fname);
 }
 
 
-SEXP R_call_function(SEXP function, AV* args) {
+SEXP R_call_function(SV* self, SEXP function, AV* args) {
 	SEXP e; /* expression */
 	SEXP next; /* pairlist iterator */
 	SV* arg_sv; /* SV container for SEXP */
