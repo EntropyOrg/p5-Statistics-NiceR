@@ -74,12 +74,12 @@ sub convert_r_to_perl_matrix {
 
 sub convert_r_to_perl_intsxp {
 	my ($self, $data) = @_;
-	return make_pdl_vector( $data );
+	return make_pdl_vector( $data, 1 );
 }
 
 sub convert_r_to_perl_realsxp {
 	my ($self, $data) = @_;
-	return make_pdl_vector( $data );
+	return make_pdl_vector( $data, 1 );
 }
 
 
@@ -90,6 +90,8 @@ sub convert_perl_to_r {
 			if( $data->ndims == 2 ) {
 				return convert_perl_to_r_PDL_ndims_2(@_);
 			} elsif( $data->ndims == 1 ) {
+				return convert_perl_to_r_PDL_ndims_1(@_);
+			} elsif( $data->ndims == 0 ) {
 				return convert_perl_to_r_PDL_ndims_1(@_);
 			} else {
 				return convert_perl_to_r_PDL(@_);
@@ -280,7 +282,7 @@ for my $type (qw(PDL_D PDL_L)) {
 	return p;
 }
 
-pdl* make_pdl_vector( SEXP r_vector ) {
+pdl* make_pdl_vector( SEXP r_vector, int flat ) {
 	size_t ndims;
 	PDL_Indx* dims;
 	pdl* p;
@@ -300,11 +302,12 @@ pdl* make_pdl_vector( SEXP r_vector ) {
 	ndims = 1;
 	Newx(dims, ndims, PDL_Indx);
 	dims[0] = nelems = Rf_length(r_vector);
-	if( dims[0] == 1 ) {
+	if( dims[0] == 1 && flat ) {
 		/* if there is a single value, treat it as a scalar instead of
 		 * as a vector.
 		 */
 		ndims = 0;
+		dims[0] = 0;
 	}
 
 	datatype = R_to_PDL_type(TYPEOF(r_vector)); /* TODO : R_to_PDL_type */

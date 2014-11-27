@@ -173,6 +173,22 @@ my $test_data = [
 	  pdl_data => do { [] },
 	  note => 'empty list' },
 
+# checking for NULL/undef is difficult because it happens at the typemap
+#	{ r_eval => q{ NULL },
+#	  r_class => 'NULL', r_typeof => 'NULL',
+#	  pdl_data => undef,
+#	  note => 'NULL/undef' },
+
+	{ r_eval => q{ as.numeric(42) },
+	  r_class => 'numeric', r_typeof => 'double',
+	  pdl_data => double( 42 ),
+	  note => 'single value of type double' },
+
+	{ r_eval => q{ as.numeric(NA) },
+	  r_class => 'numeric', r_typeof => 'double',
+	  pdl_data => double( q[BAD] ),
+	  note => 'single NA/BAD of type double' },
+
 # TODO:
 # >  k_iris <- kmeans( iris[,-5], centers=3 ); class(k_iris); typeof(k_iris)
 # [1] "kmeans"
