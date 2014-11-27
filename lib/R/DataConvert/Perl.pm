@@ -110,18 +110,17 @@ __C__
 #include "rintutil.c"
 
 SEXP make_r_string( SV* p_char ) {
-	size_t len, s_len;
+	size_t len;
 	AV* p_av;
 	size_t i;
-	SEXP r_char;
+	SEXP r_char = R_NilValue;
 
 	SV* sv_elt; /* Perl element */
 	char* char_elt;
 	SEXP r_elt; /* R element */
 
-	if( SvTYPE(p_char) == SVt_PVAV ) {
-		SvREFCNT_dec(p_char);
-		p_av = (AV*) p_char;
+	if( SvTYPE(SvRV(p_char)) == SVt_PVAV ) {
+		p_av = (AV*) SvRV(p_char);
 		len = av_len(p_av) + 1;
 
 		PROTECT( r_char = allocVector( STRSXP, len ) );
