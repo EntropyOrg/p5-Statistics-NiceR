@@ -143,13 +143,11 @@ my $test_data = [
 # test bad values
 	{ r_eval => q{
 	  	q <- array(as.double(0:26), dim=c(3,3,3));
-	  	ifelse( q %% 2, NA, q );
-	  	q                                          },
+	  	ifelse( q %% 2, NA, q );                   },
 	  r_class => 'array', r_typeof => 'double',
 	  pdl_data => do {
 	  	my $q = sequence(3,3,3);
 	  	$q->setbadif( $q % 2 );
-	  	$q;
 	  },
 	  note => 'n-d array of doubles with NA/BAD values' },
 
