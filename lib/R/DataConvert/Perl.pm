@@ -106,13 +106,13 @@ sub convert_perl_to_r_sexp {
 sub convert_perl_to_r_integer {
 	my ($self, $data) = @_;
 	# XXX using PDL
-	R::DataConvert::PDL->convert_r_to_perl( long($data) );
+	R::DataConvert::PDL->convert_perl_to_r( long($data) );
 }
 
 sub convert_perl_to_r_float {
 	my ($self, $data) = @_;
 	# XXX using PDL
-	R::DataConvert::PDL->convert_r_to_perl( double($data) );
+	R::DataConvert::PDL->convert_perl_to_r( double($data) );
 }
 
 
