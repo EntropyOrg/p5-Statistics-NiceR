@@ -151,6 +151,20 @@ my $test_data = [
 	  },
 	  note => 'n-d array of doubles with NA/BAD values' },
 
+	{ r_eval => q{ numeric() },
+	  r_class => 'numeric', r_typeof => 'double',
+	  pdl_data => do { double([]) },
+	  note => 'empty double' },
+
+	{ r_eval => q{ integer() },
+	  r_class => 'integer', r_typeof => 'integer',
+	  pdl_data => do { long([]) },
+	  note => 'empty integer' },
+
+	{ r_eval => q{ list() },
+	  r_class => 'list', r_typeof => 'list',
+	  pdl_data => do { [] },
+	  note => 'empty list' },
 
 # TODO:
 # >  k_iris <- kmeans( iris[,-5], centers=3 ); class(k_iris); typeof(k_iris)
@@ -159,11 +173,6 @@ my $test_data = [
 # > fitted(k_iris) # S3 method
 
 
-# TODO test empty lists
-
-# TODO test empty PDL
-# TODO test empty arrayref
-# TODO test empty R type: integer(), numeric(), list()
 
 ];
 

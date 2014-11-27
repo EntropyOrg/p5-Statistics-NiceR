@@ -51,7 +51,10 @@ sub convert_perl_to_r {
 			...
 		} elsif( ref $data ) {
 			if( reftype($data) eq 'ARRAY' ) {
-				if( List::AllUtils::all { ref($_) eq '' && isint($_) } @$data ) {
+				if ( @$data == 0 ) {
+					# empty list
+					return convert_perl_to_r_arrayref(@_);
+				} elsif( List::AllUtils::all { ref($_) eq '' && isint($_) } @$data ) {
 					return convert_perl_to_r_integer(@_);
 				} elsif( List::AllUtils::all { ref($_) eq '' && isfloat($_) } @$data ) {
 					return convert_perl_to_r_float(@_);
