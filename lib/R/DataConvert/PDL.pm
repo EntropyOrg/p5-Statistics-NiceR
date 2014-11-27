@@ -82,10 +82,33 @@ sub convert_perl_to_r {
 	my ($self, $data) = @_;
 	if( blessed($data) ) {
 		if( $data->isa('PDL') ) {
-			return make_r_array( $data );
+			if( $data->ndims == 2 ) {
+				return convert_perl_to_r_PDL_ndims_2(@_);
+			} elsif( $data->ndims == 1 ) {
+				return convert_perl_to_r_PDL_ndims_1(@_);
+			} else {
+				return convert_perl_to_r_PDL(@_);
+			}
 		}
 	}
 	die "could not convert";
+}
+
+sub convert_perl_to_r_PDL_ndims_1 {
+	my ($self, $data) = @_;
+	return make_r_array($data, 1, 0);
+}
+
+sub convert_perl_to_r_PDL_ndims_2 {
+	my ($self, $data) = @_;
+	my $matrix = $data->xchg(0,1);
+	# make the matrix physical
+	return make_r_array( $matrix->copy, 0, 1 );
+}
+
+sub convert_perl_to_r_PDL {
+	my ($self, $data) = @_;
+	return make_r_array( $data, 0, 0 );
 }
 
 1;
@@ -94,16 +117,17 @@ __C__
 
 #include "rintutil.c"
 
-SEXP make_r_array( pdl* p ) {
+/* flat is used to make a vector rather than an array */
+SEXP make_r_array( pdl* p, int flat, int matrix ) {
 	SEXP r_dims, r_array;
 	SV* ret;
 	int dim_i, elem_i;
 {{{
 	# TODO cover all types
-	for my $type (qw(PDL_Double)) {
+	for my $type (qw(PDL_D PDL_L)) {
 		$OUT .= qq{
-		$type *datad;
-		$type  badv;
+		$pdl_to_r->{$type}{ctype} *datad_$type;
+		$pdl_to_r->{$type}{ctype}  badv_$type;
 		};
 	}
 }}}
@@ -113,26 +137,50 @@ SEXP make_r_array( pdl* p ) {
 	r_type = PDL_to_R_type( p->datatype );
 
 	PROTECT( r_dims = allocVector( INTSXP, p->ndims ) );
-	nelems = 1;
-	for( dim_i = 0; dim_i < p->ndims; dim_i++ ) {
-		INTEGER(r_dims)[dim_i] = p->dims[dim_i];
-		nelems *= p->dims[dim_i];
+
+	if( matrix ) {
+		/* TODO check if ndims == 2 */
+		R_PreserveObject( r_array = allocMatrix( r_type, p->dims[0], p->dims[1] ) );
+		nelems = p->dims[0] * p->dims[1];
+
+	} else {
+		nelems = 1;
+		for( dim_i = 0; dim_i < p->ndims; dim_i++ ) {
+			INTEGER(r_dims)[dim_i] = p->dims[dim_i];
+			nelems *= p->dims[dim_i];
+		}
+
+		R_PreserveObject( r_array = allocVector(r_type, nelems) );
+
+		if( !flat ) {
+			/* creates data of R class 'array' */
+			dimgets( r_array, r_dims ); /* set dimensions */
+		}
 	}
 
-	R_PreserveObject(  r_array = allocVector(r_type, nelems) );
-	dimgets( r_array, r_dims ); /* set dimensions */
 	/* TODO NOTE: on DESTROY, call R_ReleaseObject() */
 
 	/* TODO support more types */
-	datad = p->data;
-	memcpy( REAL(r_array), datad, sizeof(PDL_Double) * nelems );
-	badv = PDL->get_pdl_badvalue(p);
+	switch(r_type) {
+{{{
+for my $type (qw(PDL_D PDL_L)) {
+	$OUT .= qq%
+	case $pdl_to_r->{$type}{sexptype}:
+	datad_$type = ($pdl_to_r->{$type}{ctype} *) p->data;
+	badv_$type = PDL->get_pdl_badvalue(p);
+	memcpy( $pdl_to_r->{$type}{r_macro}(r_array), datad_$type, sizeof($pdl_to_r->{$type}{ctype}) * nelems );
 	if( p->state & PDL_BADVAL ) {
 		for( elem_i = 0; elem_i < nelems; elem_i++ ) {
-			if( datad[elem_i] == badv ) {
-				REAL(r_array)[elem_i] = NA_REAL; /* use r_NA */
+			if(datad_${type}[elem_i] == badv_$type) {
+				$pdl_to_r->{$type}{r_macro}(r_array)[elem_i] = $pdl_to_r->{$type}{r_NA};
 			}
 		}
+
+	}
+	break;
+	%;
+}
+}}}
 	}
 
 	UNPROTECT(1); /* r_dims */
