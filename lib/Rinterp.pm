@@ -53,7 +53,7 @@ SEXP eval_SV( SV* eval_sv ) {
 		UNPROTECT(2); /* tmp, eval_expr_v */
 		/* TODO throw exception */
 		/*error("invalid call %s", eval_str);*/
-		return R_NilValue_to_Perl;
+		return R_NilValue;
 	}
 	/* Loop is needed here as EXPSEXP will be of length > 1 */
 	for(i = 0; i < length(eval_expr_v); i++) {
@@ -61,7 +61,7 @@ SEXP eval_SV( SV* eval_sv ) {
 		if( error_occurred ) {
 			UNPROTECT(2); /* tmp, eval_expr_v */
 			/* TODO throw exception */
-			return R_NilValue_to_Perl;
+			return R_NilValue;
 		}
 	}
 	UNPROTECT(2); /* tmp, eval_expr_v */
@@ -128,7 +128,7 @@ SEXP R_call_function(SEXP function, AV* args) {
 	UNPROTECT(1); /* e */
 	if( error_occurred ) {
 		/* TODO error checking */
-		return R_NilValue_to_Perl;
+		return R_NilValue;
 	}
 	PROTECT(ret);
 }

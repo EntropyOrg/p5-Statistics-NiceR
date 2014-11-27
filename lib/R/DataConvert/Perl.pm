@@ -39,7 +39,9 @@ sub convert_r_to_perl_vecsxp {
 
 sub convert_perl_to_r {
 	my ($self, $data) = @_;
-	if( R::DataConvert->check_r_sexp($data) ) {
+	if( not defined $data ) {
+		return convert_perl_to_r_undef(@_);
+	} elsif( R::DataConvert->check_r_sexp($data) ) {
 		return convert_perl_to_r_sexp(@_);
 	} elsif( isint($data) ) {
 		return convert_perl_to_r_integer(@_);
@@ -77,6 +79,11 @@ sub convert_perl_to_r {
 		}
 	}
 	die "could not convert";
+}
+
+sub convert_perl_to_r_undef {
+	my ($self, $data) = @_;
+	return $data; # this is handled at the typemap level
 }
 
 sub convert_perl_to_r_string {
@@ -184,7 +191,7 @@ SV* make_perl_string( SEXP r_char ) {
 
 	len = LENGTH(r_char);
 	if( 0 == len ) {
-		return R_NilValue_to_Perl;
+		return R_NilValue;
 	} else if( 1 == len ) {
 		s = CHAR(STRING_ELT(r_char, 0));
 		s_len = strlen(s);
@@ -202,7 +209,7 @@ SV* make_perl_string( SEXP r_char ) {
 		return newRV_inc(l);
 	}
 
-	return R_NilValue_to_Perl; /* shouldn't get here */
+	return R_NilValue; /* shouldn't get here */
 }
 
 SV* make_list( SEXP r_list ) {

@@ -4,17 +4,23 @@ SEXP T_PTRSEXP
 INPUT
 
 T_PTRSEXP
-        if (SvROK($arg) && sv_derived_from($arg, \"R::Sexp\")) {
+	if( $arg == &PL_sv_undef ) {
+		$var = R_NilValue;
+	} else if (SvROK($arg) && sv_derived_from($arg, \"R::Sexp\")) {
             IV tmp = SvIV((SV*)SvRV($arg));
             $var = INT2PTR($type,tmp);
-        }
-        else
+        } else {
             Perl_croak(aTHX_ \"%s: %s is not of type %s\",
                         ${$ALIAS?\q[GvNAME(CvGV(cv))]:\qq[\"$pname\"]},
-                        \"$var\", \"R::Sexp\")
+                        \"$var\", \"R::Sexp\");
+	}
 
 #############################################################################
 OUTPUT
 
 T_PTRSEXP
-        sv_setref_pv($arg, \"R::Sexp\", (void*)$var);
+	if( $var == R_NilValue ) {
+		$arg = &PL_sv_undef;
+	} else {
+		sv_setref_pv($arg, \"R::Sexp\", (void*)$var);
+	}
