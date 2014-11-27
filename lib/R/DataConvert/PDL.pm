@@ -122,6 +122,7 @@ SEXP make_r_array( pdl* p, int flat, int matrix ) {
 	SEXP r_dims, r_array;
 	SV* ret;
 	int dim_i, elem_i;
+	size_t ndims;
 {{{
 	# TODO cover all types
 	for my $type (qw(PDL_D PDL_L)) {
@@ -134,9 +135,17 @@ SEXP make_r_array( pdl* p, int flat, int matrix ) {
 	int r_type;
 	PDL_Indx nelems;
 
+	ndims = p->ndims;
+	if( ndims == 0 ) {
+		/* when the PDL is a simple scalar, then ndims == 0
+		 * but there is still a value in the PDL
+		 */
+		ndims = 1;
+	}
+
 	r_type = PDL_to_R_type( p->datatype );
 
-	PROTECT( r_dims = allocVector( INTSXP, p->ndims ) );
+	PROTECT( r_dims = allocVector( INTSXP, ndims ) );
 
 	if( matrix ) {
 		/* TODO check if ndims == 2 */
@@ -145,9 +154,20 @@ SEXP make_r_array( pdl* p, int flat, int matrix ) {
 
 	} else {
 		nelems = 1;
-		for( dim_i = 0; dim_i < p->ndims; dim_i++ ) {
-			INTEGER(r_dims)[dim_i] = p->dims[dim_i];
-			nelems *= p->dims[dim_i];
+		if( p->ndims == 0 && p->dims[0] == 0 ) {
+			/* for pdl(1): single scalar */
+			nelems = 1;
+			INTEGER(r_dims)[dim_i] = 1;
+		} else if( p->ndims == 1 && p->dims[0] == 0 ) {
+			/* for pdl([]): Empty */
+			nelems = 0;
+			INTEGER(r_dims)[dim_i] = 0;
+		} else {
+			/* n-d array */
+			for( dim_i = 0; dim_i < ndims; dim_i++ ) {
+				INTEGER(r_dims)[dim_i] = p->dims[dim_i];
+				nelems *= p->dims[dim_i];
+			}
 		}
 
 		R_PreserveObject( r_array = allocVector(r_type, nelems) );
