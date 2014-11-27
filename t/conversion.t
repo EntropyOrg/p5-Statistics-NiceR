@@ -8,6 +8,7 @@ use R;
 use Rinterp;
 use R::DataConvert;
 use PDL::Factor;
+use Data::Frame;
 use Scalar::Util qw(blessed);
 
 sub mog {
@@ -46,7 +47,7 @@ sub compare_perl {
 	my ($got, $expected, $msg) = @_;
 	if( blessed($got) && $got->isa('Data::Frame') ) {
 		# stringify Data::Frame's
-		is( "$got", "$expected", "$msg: Perl data [compare dump]");
+		is( "$got", "$expected", "$msg: Perl data [compare dump of Data::Frame]");
 	} else {
 		use PDL::IO::Dumper;
 		my $s_perl_data = mog sdump($got);
