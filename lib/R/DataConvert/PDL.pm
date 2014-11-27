@@ -139,6 +139,8 @@ SEXP make_r_array( pdl* p, int flat, int matrix ) {
 	if( ndims == 0 ) {
 		/* when the PDL is a simple scalar, then ndims == 0
 		 * but there is still a value in the PDL
+		 *
+		 * see the "single scalar" case below
 		 */
 		ndims = 1;
 	}
