@@ -33,9 +33,19 @@ sub convert_r_to_perl_dataframe {
 sub convert_perl_to_r {
 	my ($self, $data) = @_;
 	if( blessed($data) && $data->isa('Data::Frame') ) {
-		...
+		return convert_perl_to_r_dataframe(@_);
 	}
 	die "could not convert";
+}
+
+sub convert_perl_to_r_dataframe {
+	my ($self, $data) = @_;
+	my $df_colarray = [ map { $data->nth_column($_) } 0..$data->number_of_columns-1 ];
+	my $df_r = R::DataConvert::Perl->convert_perl_to_r_arrayref( $df_colarray );
+	$df_r->attrib( 'names', R::DataConvert->convert_perl_to_r( $data->column_names ) );
+	$df_r->attrib( 'row.names', R::DataConvert::Perl->convert_perl_to_r_string( $data->row_names->unpdl ) );
+	$df_r->attrib( 'class', R::DataConvert->convert_perl_to_r('data.frame') );
+	return $df_r;
 }
 
 1;
