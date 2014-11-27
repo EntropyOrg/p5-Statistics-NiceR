@@ -19,6 +19,15 @@ sub string {
 	return $str;
 }
 
+sub attrib {
+	my ($self, $attrib, $data) = @_;
+	if( @_ == 3 ) {
+		$self->set_attrib($attrib, $data);
+		return;
+	}
+	return $self->get_attrib($attrib);
+}
+
 1;
 
 __DATA__
@@ -67,7 +76,7 @@ SEXP eval_lang2( SEXP self, char* func_name ) {
 	return result;
 }
 
-SEXP attrib( SEXP self, char* name ) {
+SEXP get_attrib( SEXP self, char* name ) {
 	SEXP r_name;
 	SEXP attr;
 
@@ -78,6 +87,17 @@ SEXP attrib( SEXP self, char* name ) {
 	UNPROTECT(1); /* r_name */
 
 	return attr;
+}
+
+void set_attrib( SEXP self, char* name, SEXP data ) {
+	SEXP r_name;
+	SEXP attr;
+
+	PROTECT( r_name = mkString(name) );
+
+	setAttrib(self, r_name, data);
+
+	UNPROTECT(1); /* r_name */
 }
 
 char* r_class( SEXP self ) {
