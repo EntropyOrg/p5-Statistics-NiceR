@@ -90,8 +90,6 @@ SEXP R_call_function(SEXP function, AV* args) {
 	/* TODO check svtype for args == AV */
 	num_args = av_len( args ) + 1;
 
-	printf("args = %d\n", num_args);
-
 	/* (num_args + 1) slots: function name + args */
 	PROTECT(e = allocVector(LANGSXP, num_args + 1));
 
