@@ -35,6 +35,34 @@ __C__
 
 #include "rintutil.c"
 
+int op_identical(SEXP self, SEXP other) {
+	SEXP r_identical;
+	SEXP r_identical_lang;
+	SEXP r_identical_logical;
+	int result; /* boolean */
+	int error_occurred; /* error checking boolean */
+
+	PROTECT( r_identical = install("identical") );
+	PROTECT( r_identical_lang = lang3( r_identical, self, other) );
+
+	PROTECT( r_identical_logical = R_tryEval( r_identical_lang, R_GlobalEnv, &error_occurred) );
+
+	/* TODO handle error_occurred */
+
+	UNPROTECT(2); /* r_identical, r_identical_lang */
+
+	if( error_occurred ) {
+		result = 0; /* FALSE */
+	} else {
+		result = INTEGER(r_identical_logical)[0];
+	}
+
+	UNPROTECT(1); /* r_identical_logical */
+
+	return result;
+}
+
+
 int op_equal_all(SEXP self, SEXP other) {
 	SEXP r_equal, r_all;
 	SEXP r_equal_lang, r_all_lang;
