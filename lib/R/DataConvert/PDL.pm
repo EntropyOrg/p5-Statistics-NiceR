@@ -92,13 +92,18 @@ sub convert_perl_to_r {
 			} elsif( $data->ndims == 1 ) {
 				return convert_perl_to_r_PDL_ndims_1(@_);
 			} elsif( $data->ndims == 0 ) {
-				return convert_perl_to_r_PDL_ndims_1(@_);
+				return convert_perl_to_r_PDL_ndims_0(@_);
 			} else {
 				return convert_perl_to_r_PDL(@_);
 			}
 		}
 	}
 	die "could not convert";
+}
+
+sub convert_perl_to_r_PDL_ndims_0 {
+	my ($self, $data) = @_;
+	return make_r_array($data, 1, 0);
 }
 
 sub convert_perl_to_r_PDL_ndims_1 {
