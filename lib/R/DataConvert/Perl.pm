@@ -6,7 +6,7 @@ use warnings;
 use Inline with => qw(R::Inline::Rinline R::Inline::Rutil);
 use PDL; # XXX using PDL
 use Inline 'C';
-use Scalar::Util qw(reftype);
+use Scalar::Util qw(reftype blessed);
 use Scalar::Util::Numeric qw(isint isfloat);
 use List::AllUtils;
 
@@ -46,12 +46,17 @@ sub convert_perl_to_r {
 	} elsif( isfloat($data) ) {
 		return convert_perl_to_r_float(@_);
 	} else {
-		if( ref $data ) {
+		if( blessed($data) ) {
+			...
+		} elsif( ref $data ) {
 			if( reftype($data) eq 'ARRAY' ) {
 				if( List::AllUtils::all { isint($_) } @$data ) {
 					return convert_perl_to_r_integer(@_);
 				} elsif( List::AllUtils::all { isfloat($_) } @$data ) {
 					return convert_perl_to_r_float(@_);
+				} elsif( List::AllUtils::all { ref($_) eq '' } @$data ) {
+					# list of string scalars
+					return convert_perl_to_r_string(@_);
 				} else {
 					return convert_perl_to_r_array(@_);
 				}
@@ -65,10 +70,15 @@ sub convert_perl_to_r {
 		} else {
 			# scalar (not a reference), string
 			# XXX I think
-			...
+			return convert_perl_to_r_string(@_);
 		}
 	}
 	die "could not convert";
+}
+
+sub convert_perl_to_r_string {
+	my ($self, $data) = @_;
+	return make_r_string($data);
 }
 
 sub convert_perl_to_r_array {
@@ -98,6 +108,39 @@ __DATA__
 __C__
 
 #include "rintutil.c"
+
+SEXP make_r_string( SV* p_char ) {
+	size_t len, s_len;
+	AV* p_av;
+	size_t i;
+	SEXP r_char;
+
+	SV* sv_elt; /* Perl element */
+	char* char_elt;
+	SEXP r_elt; /* R element */
+
+	if( SvTYPE(p_char) == SVt_PVAV ) {
+		SvREFCNT_dec(p_char);
+		p_av = (AV*) p_char;
+		len = av_len(p_av) + 1;
+
+		PROTECT( r_char = allocVector( STRSXP, len ) );
+		for( i = 0; i < len; i++ ) {
+			sv_elt = *( av_fetch(p_av, i, 0) ); /* get SV out of array */
+			char_elt = SvPV_nolen( sv_elt ); /* get string out of SV */
+			r_elt = mkChar(char_elt); /* turn string into R CHARSXP */
+			SET_STRING_ELT(r_char, i, r_elt );
+		}
+	} else {
+		/* TODO make sure that this is an SVt_PV */
+		PROTECT( r_char = allocVector( STRSXP, 1 ) );
+		char_elt = SvPV_nolen( p_char );
+		r_elt = mkChar(char_elt);
+		SET_STRING_ELT(r_char, i, r_elt );
+	}
+
+	return r_char;
+}
 
 SV* make_perl_string( SEXP r_char ) {
 	size_t len;
