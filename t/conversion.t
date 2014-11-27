@@ -89,7 +89,14 @@ my $test_data = [
 	            dimnames = list(c("row1", "row2"),
 	            c("C.1", "C.2", "C.3"))) },
 	  r_class => 'matrix', r_typeof => 'double',
-	  pdl_data => pdl( q[ 1 2 3; 11 12 13 ] ),
+	  pdl_data => do {
+	  	my $matrix = pdl( q[ 1 2 3; 11 12 13 ] );
+	  	$matrix->hdr->{dimnames} = [
+	  		[ "row1", "row2" ],
+	  		[ "C.1", "C.2", "C.3" ]
+	  	];
+	  	$matrix;
+	  },
 	  note => 'a matrix'
 	},
 

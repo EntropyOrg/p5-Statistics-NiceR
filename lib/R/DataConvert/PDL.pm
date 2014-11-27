@@ -64,7 +64,12 @@ sub convert_r_to_perl_array {
 sub convert_r_to_perl_matrix {
 	my ($self, $data) = @_;
 	# TODO does this make sense?
-	return make_pdl_array( $data )->xchg(0,1);
+	my $matrix = make_pdl_array( $data )->xchg(0,1);
+	my $dimnames = $data->attrib('dimnames');
+	if(defined $dimnames) {
+		$matrix->hdr->{dimnames} = R::DataConvert->convert_r_to_perl( $dimnames );
+	}
+	return $matrix;
 }
 
 sub convert_r_to_perl_intsxp {
@@ -103,7 +108,12 @@ sub convert_perl_to_r_PDL_ndims_2 {
 	my ($self, $data) = @_;
 	my $matrix = $data->xchg(0,1);
 	# make the matrix physical
-	return make_r_array( $matrix->copy, 0, 1 );
+	my $r_matrix = make_r_array( $matrix->copy, 0, 1 );
+	my $hdr = $data->hdr;
+	if( exists $hdr->{dimnames} ) {
+		$r_matrix->attrib( 'dimnames', R::DataConvert->convert_perl_to_r( $hdr->{dimnames} ) ) ;
+	}
+	return $r_matrix;
 }
 
 sub convert_perl_to_r_PDL {
