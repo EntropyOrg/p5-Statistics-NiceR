@@ -50,15 +50,15 @@ sub convert_perl_to_r {
 			...
 		} elsif( ref $data ) {
 			if( reftype($data) eq 'ARRAY' ) {
-				if( List::AllUtils::all { isint($_) } @$data ) {
+				if( List::AllUtils::all { ref($_) eq '' && isint($_) } @$data ) {
 					return convert_perl_to_r_integer(@_);
-				} elsif( List::AllUtils::all { isfloat($_) } @$data ) {
+				} elsif( List::AllUtils::all { ref($_) eq '' && isfloat($_) } @$data ) {
 					return convert_perl_to_r_float(@_);
 				} elsif( List::AllUtils::all { ref($_) eq '' } @$data ) {
 					# list of string scalars
 					return convert_perl_to_r_string(@_);
 				} else {
-					return convert_perl_to_r_array(@_);
+					return convert_perl_to_r_arrayref(@_);
 				}
 			} elsif( reftype($data) eq 'HASH' ) {
 				# use R's env()
@@ -81,8 +81,11 @@ sub convert_perl_to_r_string {
 	return make_r_string($data);
 }
 
-sub convert_perl_to_r_array {
-	...  # make an R list (recursively)
+sub convert_perl_to_r_arrayref {
+	my ($self, $data) = @_;
+	return make_vecsxp([ map {
+		my $curr = $_;
+		R::DataConvert->convert_perl_to_r($_) } @$data ]);
 }
 
 sub convert_perl_to_r_sexp {
@@ -108,6 +111,33 @@ __DATA__
 __C__
 
 #include "rintutil.c"
+
+SEXP make_vecsxp( SV* sexp_sv ) {
+	size_t len;
+	AV* sexp_av;
+	SEXP vec = R_NilValue;
+	size_t i;
+
+	SV* sv_sexp_elt;
+	IV ptrsexp_elt;
+	SEXP r_sexp_elt;
+
+	if( SvTYPE(SvRV(sexp_sv)) == SVt_PVAV ) {
+		sexp_av = (AV*) SvRV(sexp_sv);
+		len = av_len(sexp_av) + 1;
+
+		PROTECT( vec = allocVector( VECSXP, len ) );
+		for( i = 0; i < len; i++ ) {
+			sv_sexp_elt = *( av_fetch(sexp_av, i, 0) ); /* get SV out of array */
+			ptrsexp_elt = SvIV( (SV*) SvRV(sv_sexp_elt) ); /* get integer pointer out of SV */
+			r_sexp_elt = INT2PTR(SEXP, ptrsexp_elt ); /* cast the integer to a pointer */
+			SET_VECTOR_ELT( vec, i, r_sexp_elt );
+		}
+	}
+	/* TODO throw exception if not an arrayref */
+
+	return vec;
+}
 
 SEXP make_r_string( SV* p_char ) {
 	size_t len;
