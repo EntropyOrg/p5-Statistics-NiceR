@@ -140,7 +140,7 @@ SEXP make_vecsxp( SV* sexp_sv ) {
 		for( i = 0; i < len; i++ ) {
 			sv_sexp_elt = *( av_fetch(sexp_av, i, 0) ); /* get SV out of array */
 			ptrsexp_elt = SvIV( (SV*) SvRV(sv_sexp_elt) ); /* get integer pointer out of SV */
-			r_sexp_elt = INT2PTR(SEXP, ptrsexp_elt ); /* cast the integer to a pointer */
+			PROTECT( r_sexp_elt = INT2PTR(SEXP, ptrsexp_elt ) ); /* cast the integer to a pointer */
 			SET_VECTOR_ELT( vec, i, r_sexp_elt );
 		}
 	}
@@ -167,14 +167,14 @@ SEXP make_r_string( SV* p_char ) {
 		for( i = 0; i < len; i++ ) {
 			sv_elt = *( av_fetch(p_av, i, 0) ); /* get SV out of array */
 			char_elt = SvPV_nolen( sv_elt ); /* get string out of SV */
-			r_elt = mkChar(char_elt); /* turn string into R CHARSXP */
+			PROTECT( r_elt = mkChar(char_elt) ); /* turn string into R CHARSXP */
 			SET_STRING_ELT(r_char, i, r_elt );
 		}
 	} else {
 		/* TODO make sure that this is an SVt_PV */
 		PROTECT( r_char = allocVector( STRSXP, 1 ) );
 		char_elt = SvPV_nolen( p_char );
-		r_elt = mkChar(char_elt);
+		PROTECT( r_elt = mkChar(char_elt) );
 		SET_STRING_ELT(r_char, i, r_elt );
 	}
 
