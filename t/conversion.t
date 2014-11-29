@@ -90,11 +90,12 @@ my $test_data = [
 	            c("C.1", "C.2", "C.3"))) },
 	  r_class => 'matrix', r_typeof => 'double',
 	  pdl_data => do {
-	  	my $matrix = pdl( q[ 1 2 3; 11 12 13 ] );
+	  	my $matrix = pdl( q[ 1 2 3; 11 12 13 ] )->xchg(0,1);
 	  	$matrix->hdr->{dimnames} = [
 	  		[ "row1", "row2" ],
 	  		[ "C.1", "C.2", "C.3" ]
 	  	];
+		die "not the right matrix" unless $matrix->at(0,1) == 2;
 	  	$matrix;
 	  },
 	  note => 'a matrix'
