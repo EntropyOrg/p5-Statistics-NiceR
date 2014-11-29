@@ -75,9 +75,11 @@ SEXP R_get_function(SV* self, char* fname) {
 }
 
 
-SEXP R_call_function(SV* self, SEXP function, AV* args) {
+SEXP R_call_function(SV* self, SEXP function, SV* args_ref) {
 	SEXP e; /* expression */
 	SEXP next; /* pairlist iterator */
+	AV* args; /* the array in args_ref */
+	AV* arg_av; /* SV container for SEXP */
 	SV* arg_sv; /* SV container for SEXP */
 	IV arg_intptr; /* integer pointer to SEXP */
 	SEXP arg; /* current argument */
@@ -88,6 +90,7 @@ SEXP R_call_function(SV* self, SEXP function, AV* args) {
 	int arg_idx; /* argument list iterator */
 
 	/* TODO check svtype for args == AV */
+	args = (AV*) SvRV( args_ref );
 	num_args = av_len( args ) + 1;
 
 	/* (num_args + 1) slots: function name + args */
@@ -98,7 +101,9 @@ SEXP R_call_function(SV* self, SEXP function, AV* args) {
 		next = CDR(e); /* begin argument list */
 
 		for( arg_idx = 0; arg_idx < num_args; arg_idx++ ) {
-			arg_sv = *( av_fetch( args, arg_idx, 0 ) );
+			arg_av = (AV*) *( av_fetch( args, arg_idx, 0 ) );
+			/* TODO make sure we can handle keys: currently we only look at the first item (index 0) */
+			arg_sv = *(av_fetch( SvRV(arg_av), 0, 0 ));
 			arg_intptr = SvIV( (SV*) SvRV(arg_sv) ); /* get integer pointer out of SV */
 			arg = INT2PTR(SEXP, arg_intptr ); /* cast the integer to a pointer */
 
