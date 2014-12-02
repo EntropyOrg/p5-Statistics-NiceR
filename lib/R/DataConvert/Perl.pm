@@ -29,6 +29,11 @@ sub convert_r_to_perl_charsxp {
 
 sub convert_r_to_perl_vecsxp {
 	my ($self, $data) = @_;
+	my $names_r = $data->attrib('names');
+	if( defined $names_r ) {
+		#my $names_perl = R::DataConvert->convert_r_to_perl($names_r);
+		warn "R list has names attribute which needs to be processed";
+	}
 	return [ map {
 			my $curr = $_;
 			  ref $curr eq 'R::Sexp'
