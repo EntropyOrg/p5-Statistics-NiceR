@@ -1,4 +1,5 @@
 package R;
+# ABSTRACT: interface to the R programming language
 
 use strict;
 use warnings;
