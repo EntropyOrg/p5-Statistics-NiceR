@@ -101,9 +101,9 @@ SEXP R_call_function(SV* self, SEXP function, SV* args_ref) {
 		next = CDR(e); /* begin argument list */
 
 		for( arg_idx = 0; arg_idx < num_args; arg_idx++ ) {
-			arg_av = (AV*) *( av_fetch( args, arg_idx, 0 ) );
+			arg_av = (AV*)SvRV( *( av_fetch( args, arg_idx, 0 ) ) );
 			/* TODO make sure we can handle keys: currently we only look at the first item (index 0) */
-			arg_sv = *(av_fetch( SvRV(arg_av), 0, 0 ));
+			arg_sv = *(av_fetch( arg_av, 0, 0 ));
 			arg_intptr = SvIV( (SV*) SvRV(arg_sv) ); /* get integer pointer out of SV */
 			arg = INT2PTR(SEXP, arg_intptr ); /* cast the integer to a pointer */
 

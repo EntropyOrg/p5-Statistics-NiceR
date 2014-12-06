@@ -37,7 +37,7 @@ int R_to_PDL_type(SEXPTYPE r_type) {
 char* strsxp_elt_to_charptr(SEXP strsexp, size_t elt) {
 	int n;
 	size_t total_len;
-	char* temp;
+	const char* temp;
 	char* str;
 
 	n = LENGTH(strsexp);

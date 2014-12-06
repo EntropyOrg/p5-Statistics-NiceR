@@ -196,7 +196,7 @@ SV* make_perl_string( SEXP r_char ) {
 
 	len = LENGTH(r_char);
 	if( 0 == len ) {
-		return R_NilValue;
+		return &PL_sv_undef;
 	} else if( 1 == len ) {
 		s = CHAR(STRING_ELT(r_char, 0));
 		s_len = strlen(s);
@@ -214,7 +214,7 @@ SV* make_perl_string( SEXP r_char ) {
 		return newRV_inc(l);
 	}
 
-	return R_NilValue; /* shouldn't get here */
+	return &PL_sv_undef; /* shouldn't get here */
 }
 
 SV* make_list( SEXP r_list ) {
