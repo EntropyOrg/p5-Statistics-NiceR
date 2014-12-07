@@ -10,10 +10,6 @@ use Scalar::Util qw(reftype blessed);
 use Scalar::Util::Numeric qw(isint isfloat);
 use List::AllUtils;
 
-sub import {
-	Inline->init;
-}
-
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
 	if( R::DataConvert->check_r_sexp($data) ) {

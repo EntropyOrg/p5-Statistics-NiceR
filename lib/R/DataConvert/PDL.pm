@@ -45,10 +45,6 @@ BEGIN {
 	## END OF Inline processing
 }
 
-sub import {
-	Inline->init;
-}
-
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
 	if( R::DataConvert->check_r_sexp($data) ) {

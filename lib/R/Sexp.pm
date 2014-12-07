@@ -9,10 +9,6 @@ use Capture::Tiny qw(capture_stdout);
 
 use overload '""' => \&string;
 
-sub import {
-	Inline->init;
-}
-
 sub string {
 	my ($self) = @_;
 	# TODO change this to properly use R's callbacks instead of Capture::Tiny
