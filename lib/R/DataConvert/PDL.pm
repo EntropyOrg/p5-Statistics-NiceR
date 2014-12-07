@@ -34,7 +34,7 @@ BEGIN {
 	}
 
 	# read in template and fill
-	my $c_template_file = catfile( dirname(__FILE__), 'PDL.c.pl' );
+	my $c_template_file = catfile( dirname(__FILE__), 'PDL.c.pm' );
 	my $template_string = read_file($c_template_file);
 	$template_string =~ s/^__DATA__$//msg;
 	$template_string =~ s/^__C__$//msg;
