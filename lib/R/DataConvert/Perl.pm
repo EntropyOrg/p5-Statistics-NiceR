@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
-use PDL; # XXX using PDL
+use PDL::Lite; # XXX using PDL
 use Inline C => 'DATA';
 use Scalar::Util qw(reftype blessed);
 use Scalar::Util::Numeric qw(isint isfloat);
@@ -115,13 +115,13 @@ sub convert_perl_to_r_sexp {
 sub convert_perl_to_r_integer {
 	my ($self, $data) = @_;
 	# XXX using PDL
-	R::DataConvert::PDL->convert_perl_to_r( long($data) );
+	R::DataConvert::PDL->convert_perl_to_r( PDL::Core::long($data) );
 }
 
 sub convert_perl_to_r_float {
 	my ($self, $data) = @_;
 	# XXX using PDL
-	R::DataConvert::PDL->convert_perl_to_r( double($data) );
+	R::DataConvert::PDL->convert_perl_to_r( PDL::core::double($data) );
 }
 
 
