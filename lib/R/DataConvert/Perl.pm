@@ -3,12 +3,16 @@ package R::DataConvert::Perl;
 use strict;
 use warnings;
 
-use Inline with => qw(R::Inline::Rinline R::Inline::Rutil);
+use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
 use PDL; # XXX using PDL
-use Inline 'C';
+use Inline C => 'DATA';
 use Scalar::Util qw(reftype blessed);
 use Scalar::Util::Numeric qw(isint isfloat);
 use List::AllUtils;
+
+sub import {
+	Inline->init;
+}
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;

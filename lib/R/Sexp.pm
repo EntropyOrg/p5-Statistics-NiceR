@@ -4,10 +4,14 @@ use strict;
 use warnings;
 
 use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
-use Inline 'C';
+use Inline C => 'DATA';
 use Capture::Tiny qw(capture_stdout);
 
 use overload '""' => \&string;
+
+sub import {
+	Inline->init;
+}
 
 sub string {
 	my ($self) = @_;
