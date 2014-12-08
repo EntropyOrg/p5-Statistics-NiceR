@@ -1,4 +1,5 @@
 package Rinterp;
+# ABSTRACT: manages the embedded R interpreter
 
 use strict;
 use warnings;
@@ -38,7 +39,9 @@ void _stop_R() {
 	Rf_endEmbeddedR(0);
 }
 
-SEXP eval_SV( SV* eval_sv ) {
+/* undefine eval from Rinternals.h */
+#undef eval
+SEXP eval( SV* self, SV* eval_sv ) {
 	SEXP tmp, eval_expr_v, ret;
 	ParseStatus status;
 	char* eval_str;

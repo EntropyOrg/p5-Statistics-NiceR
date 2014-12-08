@@ -206,7 +206,7 @@ for my $t (@$test_data) {
 	my $r_code = $t->{r_eval};
 
 	subtest "$t->{note}: $t->{r_eval}" => sub {
-		my $r_data = Rinterp::eval_SV( $r_code );
+		my $r_data = Rinterp->eval( $r_code );
 		my $perl_data;
 		eval {
 			$perl_data = R::DataConvert->convert_r_to_perl( $r_data ); 1
