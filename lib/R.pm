@@ -8,8 +8,6 @@ use Rinterp;
 use R::Sexp;
 use R::DataConvert;
 
-# TODO AUTOLOAD
-
 sub new {
 	my ($klass) = @_;
 	my $obj = bless { converter => 'R::DataConvert', r_interpreter => 'Rinterp' }, $klass;
@@ -20,7 +18,6 @@ sub new {
 	$obj;
 }
 
-our $AUTOLOAD;
 sub AUTOLOAD {
 	(my $fname = our $AUTOLOAD) =~ s/^@{[__PACKAGE__]}:://;
 	my ($self, @args) = @_;
