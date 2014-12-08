@@ -12,7 +12,12 @@ use R::DataConvert;
 
 sub new {
 	my ($klass) = @_;
-	bless { converter => 'R::DataConvert', r_interpreter => 'Rinterp' }, $klass;
+	my $obj = bless { converter => 'R::DataConvert', r_interpreter => 'Rinterp' }, $klass;
+
+	# add this function to R env so that eval'ing a string is easy via the function call interface
+	$obj->{r_interpreter}->eval( q{ eval_parse <- function(x) eval( parse( text = x ) ) } );
+
+	$obj;
 }
 
 our $AUTOLOAD;
