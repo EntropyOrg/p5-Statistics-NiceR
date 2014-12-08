@@ -4,8 +4,10 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Spec;
+use File::Which;
 
 sub import {
+	die "R executable not found" unless which('R');
 	unless( $ENV{R_HOME} ) {
 		my $Rhome = `R RHOME`;
 		chomp $Rhome;
