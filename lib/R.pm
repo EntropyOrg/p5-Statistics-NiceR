@@ -27,7 +27,16 @@ sub AUTOLOAD {
 	my $function = $self->{r_interpreter}->R_get_function($fname);
 	my @r_args = map { [ $self->{converter}->convert_perl_to_r($_) ] } @args;
 	my $r_data = $self->{r_interpreter}->R_call_function( $function, \@r_args );
-	return $self->{converter}->convert_r_to_perl( $r_data );
+	my $perl_data = eval {
+		$self->{converter}->convert_r_to_perl( $r_data );
+	};
+	if( $@ ) {
+		return $r_data if( $@ =~ /could not convert/ );
+
+		die $@; # for other errors, rethrow
+	}
+	# otherwise, no error in conversion
+	return $perl_data;
 }
 
 1;
