@@ -195,6 +195,8 @@ my $test_data = [
 # [1] "kmeans"
 # [1] "list"
 # > fitted(k_iris) # S3 method
+# TODO matrix of characters
+
 
 
 
