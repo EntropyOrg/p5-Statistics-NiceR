@@ -13,6 +13,7 @@ use Text::Template;
 use R::Inline::TypeInfo;
 use Scalar::Util qw(blessed);
 
+my $code;
 BEGIN {
 	## START OF Inline processing
 
@@ -34,16 +35,16 @@ BEGIN {
 	}
 
 	# read in template and fill
-	my $c_template_file = catfile( dirname(__FILE__), 'PDL.c.pm' );
+	my $c_template_file = catfile( dirname(__FILE__), 'PDL.c.tmpl' );
 	my $template_string = read_file($c_template_file);
 	$template_string =~ s/\A.*?__C__$//msg;
 	my $template = Text::Template->new(
 		TYPE => 'STRING', SOURCE => $template_string,
 		DELIMITERS => ['{{{', '}}}'], );
-	Inline->bind( C => $template->fill_in( HASH => { pdl_to_r => \$pdl_to_r } ) );
-
+	$code = $template->fill_in( HASH => { pdl_to_r => \$pdl_to_r } );
 	## END OF Inline processing
 }
+use R::DataConvert::PDL::Inline C => $code;
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
@@ -132,3 +133,6 @@ sub convert_perl_to_r_PDL {
 }
 
 1;
+__DATA__
+__C__
+/* see lib/R/DataConvert/PDL.c.tmpl */

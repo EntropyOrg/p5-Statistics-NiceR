@@ -5,7 +5,7 @@ use warnings;
 
 use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
 use PDL::Lite; # XXX using PDL
-use Inline C => 'DATA';
+use R::DataConvert::Perl::Inline C => 'DATA';
 use Scalar::Util qw(reftype blessed);
 use Scalar::Util::Numeric qw(isint isfloat);
 use List::AllUtils;

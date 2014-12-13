@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
-use Inline C => 'DATA';
+use R::Sexp::Inline C => 'DATA';
 use Capture::Tiny qw(capture_stdout);
 
 use overload '""' => \&string;
