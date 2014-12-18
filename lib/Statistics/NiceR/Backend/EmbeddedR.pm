@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Statistics::NiceR::Inline::Rinline; # this is need to set the R_HOME env variable
-use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rutil);
+use Inline with => qw(Statistics::NiceR::Inline::Rinline);
 use Statistics::NiceR::Backend::EmbeddedR::Inline C => 'DATA';
 
 our $loaded = -1;
@@ -27,8 +27,6 @@ END {
 
 __DATA__
 __C__
-
-#include "rintutil.c"
 
 void _start_R() {
 	char *localArgs[] = {"R", "--no-save","--silent"};

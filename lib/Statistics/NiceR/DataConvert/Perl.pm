@@ -3,7 +3,7 @@ package Statistics::NiceR::DataConvert::Perl;
 use strict;
 use warnings;
 
-use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rutil);
+use Inline with => qw(Statistics::NiceR::Inline::Rinline);
 use PDL::Lite; # XXX using PDL
 use Statistics::NiceR::DataConvert::Perl::Inline C => 'DATA';
 use Scalar::Util qw(reftype blessed);
@@ -124,8 +124,6 @@ sub convert_perl_to_r_float {
 1;
 __DATA__
 __C__
-
-#include "rintutil.c"
 
 SEXP make_vecsxp( SV* sexp_sv ) {
 	size_t len;
