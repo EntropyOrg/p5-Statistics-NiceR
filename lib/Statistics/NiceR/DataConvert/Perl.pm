@@ -1,18 +1,18 @@
-package R::DataConvert::Perl;
+package Statistics::NiceR::DataConvert::Perl;
 
 use strict;
 use warnings;
 
-use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
+use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rpdl Statistics::NiceR::Inline::Rutil);
 use PDL::Lite; # XXX using PDL
-use R::DataConvert::Perl::Inline C => 'DATA';
+use Statistics::NiceR::DataConvert::Perl::Inline C => 'DATA';
 use Scalar::Util qw(reftype blessed);
 use Scalar::Util::Numeric qw(isint isfloat);
 use List::AllUtils;
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
-	if( R::DataConvert->check_r_sexp($data) ) {
+	if( Statistics::NiceR::DataConvert->check_r_sexp($data) ) {
 		if( $data->r_class eq 'character' ) {
 			return convert_r_to_perl_charsxp(@_);
 		} elsif( $data->r_class eq 'list' ) {
@@ -31,13 +31,13 @@ sub convert_r_to_perl_vecsxp {
 	my ($self, $data) = @_;
 	my $names_r = $data->attrib('names');
 	if( defined $names_r ) {
-		#my $names_perl = R::DataConvert->convert_r_to_perl($names_r);
+		#my $names_perl = Statistics::NiceR::DataConvert->convert_r_to_perl($names_r);
 		warn "R list has names attribute which needs to be processed";
 	}
 	return [ map {
 			my $curr = $_;
-			  ref $curr eq 'R::Sexp'
-			? R::DataConvert->convert_r_to_perl($curr)
+			  ref $curr eq 'Statistics::NiceR::Sexp'
+			? Statistics::NiceR::DataConvert->convert_r_to_perl($curr)
 			: $curr
 		} @{ make_list( $data ) } ];
 }
@@ -46,7 +46,7 @@ sub convert_perl_to_r {
 	my ($self, $data) = @_;
 	if( not defined $data ) {
 		return convert_perl_to_r_undef(@_);
-	} elsif( R::DataConvert->check_r_sexp($data) ) {
+	} elsif( Statistics::NiceR::DataConvert->check_r_sexp($data) ) {
 		return convert_perl_to_r_sexp(@_);
 	} elsif( isint($data) ) {
 		return convert_perl_to_r_integer(@_);
@@ -100,7 +100,7 @@ sub convert_perl_to_r_arrayref {
 	my ($self, $data) = @_;
 	return make_vecsxp([ map {
 		my $curr = $_;
-		R::DataConvert->convert_perl_to_r($_) } @$data ]);
+		Statistics::NiceR::DataConvert->convert_perl_to_r($_) } @$data ]);
 }
 
 sub convert_perl_to_r_sexp {
@@ -111,13 +111,13 @@ sub convert_perl_to_r_sexp {
 sub convert_perl_to_r_integer {
 	my ($self, $data) = @_;
 	# XXX using PDL
-	R::DataConvert::PDL->convert_perl_to_r( PDL::Core::long($data) );
+	Statistics::NiceR::DataConvert::PDL->convert_perl_to_r( PDL::Core::long($data) );
 }
 
 sub convert_perl_to_r_float {
 	my ($self, $data) = @_;
 	# XXX using PDL
-	R::DataConvert::PDL->convert_perl_to_r( PDL::core::double($data) );
+	Statistics::NiceR::DataConvert::PDL->convert_perl_to_r( PDL::core::double($data) );
 }
 
 
@@ -231,7 +231,7 @@ SV* make_list( SEXP r_list ) {
 		e = VECTOR_ELT(r_list, i);
 
 		sv_tmp = sv_newmortal();
-		sv_setref_pv(sv_tmp, "R::Sexp", (void*)e);
+		sv_setref_pv(sv_tmp, "Statistics::NiceR::Sexp", (void*)e);
 
 		av_store(l, i, SvREFCNT_inc(sv_tmp));
 	}

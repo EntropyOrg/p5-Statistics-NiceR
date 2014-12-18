@@ -3,10 +3,10 @@ use Test::Most tests => 1;
 use strict;
 use warnings;
 
-use R;
+use Statistics::NiceR;
 use PDL;
 
-my $r = R->new;
+my $r = Statistics::NiceR->new;
 
 my $df = $r->get('iris');
 my $mean  = Statistics::NiceR::Backend::EmbeddedR->R_get_function('mean');

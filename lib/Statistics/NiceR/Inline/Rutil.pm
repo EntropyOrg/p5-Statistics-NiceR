@@ -1,4 +1,4 @@
-package R::Inline::Rutil;
+package Statistics::NiceR::Inline::Rutil;
 
 use strict;
 use warnings;

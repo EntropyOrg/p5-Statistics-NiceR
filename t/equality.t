@@ -3,7 +3,7 @@ use Test::Most tests => 10;
 use strict;
 use warnings;
 
-use R;
+use Statistics::NiceR;
 
 my $r1 = Statistics::NiceR::Backend::EmbeddedR->eval(q{ c(3,2,1) });
 my $r2 = Statistics::NiceR::Backend::EmbeddedR->eval(q{ c(3,2,1) });

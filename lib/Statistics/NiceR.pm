@@ -1,16 +1,16 @@
-package R;
+package Statistics::NiceR;
 # ABSTRACT: interface to the R programming language
 
 use strict;
 use warnings;
 
 use Statistics::NiceR::Backend::EmbeddedR;
-use R::Sexp;
-use R::DataConvert;
+use Statistics::NiceR::Sexp;
+use Statistics::NiceR::DataConvert;
 
 sub new {
 	my ($klass) = @_;
-	my $obj = bless { converter => 'R::DataConvert', r_interpreter => 'Statistics::NiceR::Backend::EmbeddedR' }, $klass;
+	my $obj = bless { converter => 'Statistics::NiceR::DataConvert', r_interpreter => 'Statistics::NiceR::Backend::EmbeddedR' }, $klass;
 
 	# add this function to R env so that eval'ing a string is easy via the function call interface
 	$obj->{r_interpreter}->eval( q{ eval_parse <- function(x) eval( parse( text = x ) ) } );

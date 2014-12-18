@@ -4,7 +4,7 @@
 
 =head1 NAME
 
-R - interface to the R programming language
+Statistics::NiceR - interface to the R programming language
 
 =head1 VERSION
 

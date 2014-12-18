@@ -4,9 +4,9 @@ use strict;
 use warnings;
 
 use PDL;
-use R;
+use Statistics::NiceR;
 use Statistics::NiceR::Backend::EmbeddedR;
-use R::DataConvert;
+use Statistics::NiceR::DataConvert;
 use PDL::Factor;
 use Data::Frame;
 use Scalar::Util qw(blessed);
@@ -211,7 +211,7 @@ for my $t (@$test_data) {
 		my $r_data = Statistics::NiceR::Backend::EmbeddedR->eval( $r_code );
 		my $perl_data;
 		eval {
-			$perl_data = R::DataConvert->convert_r_to_perl( $r_data ); 1
+			$perl_data = Statistics::NiceR::DataConvert->convert_r_to_perl( $r_data ); 1
 		} or ok(0, "conversion failed: $@");
 		my $conversion_to_perl = !$@;
 
@@ -229,7 +229,7 @@ for my $t (@$test_data) {
 			next unless exists $t->{$key};
 			my $converted_r_data;
 			eval {
-				$converted_r_data = R::DataConvert->convert_perl_to_r( $t->{$key} ); 1
+				$converted_r_data = Statistics::NiceR::DataConvert->convert_perl_to_r( $t->{$key} ); 1
 			} or ok(0, "conversion failed: $@");
 			my $conversion_to_r = !$@;
 

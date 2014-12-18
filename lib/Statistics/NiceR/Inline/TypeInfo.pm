@@ -1,4 +1,4 @@
-package R::Inline::TypeInfo;
+package Statistics::NiceR::Inline::TypeInfo;
 
 use strict;
 use warnings;

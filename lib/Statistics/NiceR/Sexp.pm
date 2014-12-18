@@ -1,10 +1,10 @@
-package R::Sexp;
+package Statistics::NiceR::Sexp;
 
 use strict;
 use warnings;
 
-use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
-use R::Sexp::Inline C => 'DATA';
+use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rpdl Statistics::NiceR::Inline::Rutil);
+use Statistics::NiceR::Sexp::Inline C => 'DATA';
 use Capture::Tiny qw(capture_stdout);
 
 use overload '""' => \&string;

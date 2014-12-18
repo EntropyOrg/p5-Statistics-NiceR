@@ -3,10 +3,10 @@ use Test::Most tests => 5;
 use strict;
 use warnings;
 
-use R;
+use Statistics::NiceR;
 use PDL;
 
-my $r = R->new;
+my $r = Statistics::NiceR->new;
 
 my $r_seq = $r->sequence( 10 );
 my $p_seq = sequence(10) + 1;

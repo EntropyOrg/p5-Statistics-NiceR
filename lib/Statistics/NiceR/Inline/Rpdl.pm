@@ -1,4 +1,4 @@
-package R::Inline::Rpdl;
+package Statistics::NiceR::Inline::Rpdl;
 
 use strict;
 use warnings;

@@ -1,23 +1,23 @@
-package R::DataConvert::PDL;
+package Statistics::NiceR::DataConvert::PDL;
 
 use strict;
 use warnings;
 
-use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
+use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rpdl Statistics::NiceR::Inline::Rutil);
 # NOTE: Inline->bind() used below
 use File::Slurp::Tiny qw(read_file);
 use File::Spec::Functions;
 use File::Basename;
 use PDL::Types;
 use Text::Template;
-use R::Inline::TypeInfo;
+use Statistics::NiceR::Inline::TypeInfo;
 use Scalar::Util qw(blessed);
 
 my $code;
 BEGIN {
 	## START OF Inline processing
 
-	sub _type_helper { R::Inline::TypeInfo->get_type_info($_[0]); }
+	sub _type_helper { Statistics::NiceR::Inline::TypeInfo->get_type_info($_[0]); }
 	my $pdl_to_r = {
 		PDL_B   => _type_helper('CHARSXP'),
 
@@ -44,11 +44,11 @@ BEGIN {
 	$code = $template->fill_in( HASH => { pdl_to_r => \$pdl_to_r } );
 	## END OF Inline processing
 }
-use R::DataConvert::PDL::Inline C => $code;
+use Statistics::NiceR::DataConvert::PDL::Inline C => $code;
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
-	if( R::DataConvert->check_r_sexp($data) ) {
+	if( Statistics::NiceR::DataConvert->check_r_sexp($data) ) {
 		if( $data->r_class eq 'array' ) {
 			return convert_r_to_perl_array(@_);
 		} elsif( $data->r_class eq 'matrix' ) {
@@ -73,7 +73,7 @@ sub convert_r_to_perl_matrix {
 	my $matrix = make_pdl_array( $data );
 	my $dimnames = $data->attrib('dimnames');
 	if(defined $dimnames) {
-		$matrix->hdr->{dimnames} = R::DataConvert->convert_r_to_perl( $dimnames );
+		$matrix->hdr->{dimnames} = Statistics::NiceR::DataConvert->convert_r_to_perl( $dimnames );
 	}
 	return $matrix;
 }
@@ -122,7 +122,7 @@ sub convert_perl_to_r_PDL_ndims_2 {
 	my $r_matrix = make_r_array( $data->copy, 0, 1 );
 	my $hdr = $data->hdr;
 	if( exists $hdr->{dimnames} ) {
-		$r_matrix->attrib( 'dimnames', R::DataConvert->convert_perl_to_r( $hdr->{dimnames} ) ) ;
+		$r_matrix->attrib( 'dimnames', Statistics::NiceR::DataConvert->convert_perl_to_r( $hdr->{dimnames} ) ) ;
 	}
 	return $r_matrix;
 }
