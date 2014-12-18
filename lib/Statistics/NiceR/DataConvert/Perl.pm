@@ -3,7 +3,7 @@ package Statistics::NiceR::DataConvert::Perl;
 use strict;
 use warnings;
 
-use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rpdl Statistics::NiceR::Inline::Rutil);
+use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rutil);
 use PDL::Lite; # XXX using PDL
 use Statistics::NiceR::DataConvert::Perl::Inline C => 'DATA';
 use Scalar::Util qw(reftype blessed);

@@ -3,8 +3,7 @@ package Statistics::NiceR::DataConvert::PDL;
 use strict;
 use warnings;
 
-use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rpdl Statistics::NiceR::Inline::Rutil);
-# NOTE: Inline->bind() used below
+use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rpdl);
 use File::Slurp::Tiny qw(read_file);
 use File::Spec::Functions;
 use File::Basename;

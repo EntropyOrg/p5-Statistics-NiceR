@@ -2,7 +2,37 @@
 __DATA__
 __C__
 
-#include "rintutil.c"
+SEXPTYPE PDL_to_R_type( int pdl_type ) {
+	switch(pdl_type) {
+		case PDL_B:
+			return CHARSXP;
+		case PDL_S:
+		case PDL_US:
+		case PDL_L:
+		case PDL_IND:
+		case PDL_LL:
+			return INTSXP;
+		case PDL_F:
+		case PDL_D:
+			return REALSXP;
+	}
+  return -1; /* TODO exception */
+}
+
+int R_to_PDL_type(SEXPTYPE r_type) {
+	switch(r_type) {
+		case REALSXP: return PDL_D; break;
+
+		case LGLSXP:
+		case INTSXP: return PDL_L; /* TODO is this correct? should I check: .Machine$integer.max */
+
+		case CPLXSXP: return -1; /* TODO map to PDL::Complex */
+
+		case STRSXP: return -1; /* TODO map to string or PDL::Char */
+  }
+  return -1; /* TODO exception */
+}
+
 
 /* flat is used to make a vector rather than an array */
 SEXP make_r_array( pdl* p, int flat, int matrix ) {

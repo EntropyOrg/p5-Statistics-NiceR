@@ -5,8 +5,7 @@ use strict;
 use warnings;
 
 use Statistics::NiceR::Inline::Rinline; # this is need to set the R_HOME env variable
-# TODO Rpdl shouldn't be included, but need for the use in rintutil.c
-use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rpdl Statistics::NiceR::Inline::Rutil);
+use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rutil);
 use Statistics::NiceR::Backend::EmbeddedR::Inline C => 'DATA';
 
 our $loaded = -1;

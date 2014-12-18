@@ -3,7 +3,7 @@ package Statistics::NiceR::Sexp;
 use strict;
 use warnings;
 
-use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rpdl Statistics::NiceR::Inline::Rutil);
+use Inline with => qw(Statistics::NiceR::Inline::Rinline Statistics::NiceR::Inline::Rutil);
 use Statistics::NiceR::Sexp::Inline C => 'DATA';
 use Capture::Tiny qw(capture_stdout);
 
