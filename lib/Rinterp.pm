@@ -1,4 +1,4 @@
-package Rinterp;
+package Statistics::NiceR::Backend::EmbeddedR;
 # ABSTRACT: manages the embedded R interpreter
 
 use strict;
@@ -7,15 +7,15 @@ use warnings;
 use R::Inline::Rinline; # this is need to set the R_HOME env variable
 # TODO Rpdl shouldn't be included, but need for the use in rintutil.c
 use Inline with => qw(R::Inline::Rinline R::Inline::Rpdl R::Inline::Rutil);
-use Rinterp::Inline C => 'DATA';
+use Statistics::NiceR::Backend::EmbeddedR::Inline C => 'DATA';
 
 our $loaded = -1;
 
 
 sub import {
 	Inline->init;
-	unless($Rinterp::loaded == $$) {
-		$Rinterp::loaded = $$;
+	unless($Statistics::NiceR::Backend::EmbeddedR::loaded == $$) {
+		$Statistics::NiceR::Backend::EmbeddedR::loaded = $$;
 		_start_R();
 	}
 }
