@@ -10,6 +10,31 @@ Statistics::NiceR - interface to the R programming language
 
 version 0.01
 
+=head1 SYNOPSIS
+
+=head1 METHODS
+
+=head2 new
+
+  new()
+
+Creates a new instance of a wrapper around the R interpreter.
+
+   use Statistics::NiceR
+   my $r = Statistics::NiceR->new();
+
+=head2 eval_parse
+
+   $eval_result = eval_parse( Str $r_code )
+
+A convenience function that allows for evaluating arbitrary R code.
+
+The return value is the last line of the code in C<$r_code>.
+
+=head1 CALLING R FUNCTIONS
+
+=head1
+
 =head1 AUTHOR
 
 Zakariyya Mughal <zmughal@cpan.org>
