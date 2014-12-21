@@ -6,6 +6,7 @@ use warnings;
 use Statistics::NiceR::DataConvert::PDL;
 use PDL::Factor;
 use Scalar::Util qw(blessed);
+use Statistics::NiceR::Error;
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
@@ -14,7 +15,7 @@ sub convert_r_to_perl {
 			return convert_r_to_perl_factor(@_);
 		}
 	}
-	die "could not convert";
+	Statistics::NiceR::Error::Conversion::RtoPerl->throw;
 }
 
 sub convert_r_to_perl_factor {
@@ -33,7 +34,7 @@ sub convert_perl_to_r {
 	if( blessed($data) && $data->isa('PDL::Factor') ) {
 		return convert_perl_to_r_factor(@_);
 	}
-	die "could not convert";
+	Statistics::NiceR::Error::Conversion::PerltoR->throw;
 }
 
 sub convert_perl_to_r_factor {

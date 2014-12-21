@@ -11,6 +11,7 @@ use PDL::Types;
 use Text::Template;
 use Statistics::NiceR::Inline::TypeInfo;
 use Scalar::Util qw(blessed);
+use Statistics::NiceR::Error;
 
 my $code;
 BEGIN {
@@ -58,7 +59,7 @@ sub convert_r_to_perl {
 			return convert_r_to_perl_realsxp(@_);
 		}
 	}
-	die "could not convert";
+	Statistics::NiceR::Error::Conversion::RtoPerl->throw;
 }
 
 sub convert_r_to_perl_array {
@@ -103,7 +104,7 @@ sub convert_perl_to_r {
 			}
 		}
 	}
-	die "could not convert";
+	Statistics::NiceR::Error::Conversion::PerltoR->throw;
 }
 
 sub convert_perl_to_r_PDL_ndims_0 {

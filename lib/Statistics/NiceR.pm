@@ -54,14 +54,15 @@ sub AUTOLOAD {
 	my $function = $self->{r_interpreter}->R_get_function($r_fname);
 	my @r_args = map { [ $self->{converter}->convert_perl_to_r($_) ] } @args;
 	my $r_data = $self->{r_interpreter}->R_call_function( $function, \@r_args );
-	my $perl_data = eval {
+	my $perl_data = try {
 		$self->{converter}->convert_r_to_perl( $r_data );
-	};
-	if( $@ ) {
-		return $r_data if( $@ =~ /could not convert/ );
+	} catch {
+		die $_ unless ref $_; # don't know what do with the error
 
-		die $@; # for other errors, rethrow
-	}
+		return $r_data if ref $_ && $_->isa( 'Statistics::NiceR::Error::Conversion' );
+
+		$_->throw # for other errors, rethrow;
+	};
 	# otherwise, no error in conversion
 	return $perl_data;
 }

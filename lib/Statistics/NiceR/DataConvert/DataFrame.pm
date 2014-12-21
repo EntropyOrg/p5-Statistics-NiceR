@@ -7,6 +7,7 @@ use Statistics::NiceR::DataConvert::PDL;
 use Data::Frame;
 use Scalar::Util qw(blessed);
 use List::AllUtils;
+use Statistics::NiceR::Error;
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
@@ -15,7 +16,7 @@ sub convert_r_to_perl {
 			return convert_r_to_perl_dataframe(@_);
 		}
 	}
-	die "could not convert";
+	Statistics::NiceR::Error::Conversion::RtoPerl->throw;
 }
 
 sub convert_r_to_perl_dataframe {
@@ -35,7 +36,7 @@ sub convert_perl_to_r {
 	if( blessed($data) && $data->isa('Data::Frame') ) {
 		return convert_perl_to_r_dataframe(@_);
 	}
-	die "could not convert";
+	Statistics::NiceR::Error::Conversion::PerltoR->throw;
 }
 
 sub convert_perl_to_r_dataframe {

@@ -9,6 +9,7 @@ use Statistics::NiceR::DataConvert::Perl::Inline C => 'DATA';
 use Scalar::Util qw(reftype blessed);
 use Scalar::Util::Numeric qw(isint isfloat);
 use List::AllUtils;
+use Statistics::NiceR::Error;
 
 sub convert_r_to_perl {
 	my ($self, $data) = @_;
@@ -19,7 +20,7 @@ sub convert_r_to_perl {
 			return convert_r_to_perl_vecsxp(@_);
 		}
 	}
-	die "could not convert";
+	Statistics::NiceR::Error::Conversion::RtoPerl->throw;
 }
 
 sub convert_r_to_perl_charsxp {
@@ -83,7 +84,7 @@ sub convert_perl_to_r {
 			return convert_perl_to_r_string(@_);
 		}
 	}
-	die "could not convert";
+	Statistics::NiceR::Error::Conversion::PerltoR->throw;
 }
 
 sub convert_perl_to_r_undef {

@@ -9,6 +9,7 @@ use Statistics::NiceR::DataConvert::Perl;
 use Statistics::NiceR::DataConvert::DataFrame;
 use Statistics::NiceR::DataConvert::Factor;
 use Scalar::Util qw(blessed);
+use Statistics::NiceR::Error;
 
 sub convert_r_to_perl {
 	my ($klass, $data) = @_;
@@ -20,9 +21,9 @@ sub convert_r_to_perl {
 			$ret = &{"${p}::convert_r_to_perl"}(@_);
 			1;
 		} and return $ret;
-		die $@ unless( $@ =~ /could not convert/ );
+		die $@ unless ref $@ && $@->isa('Statistics::NiceR::Error::Conversion::RtoPerl');
 	}
-	die $@; # TODO rethrow
+	Statistics::NiceR::Error::Conversion::RtoPerl->throw('No suitable conversion found');
 }
 
 sub check_r_sexp {
@@ -38,9 +39,9 @@ sub convert_perl_to_r {
 			$ret = &{"${p}::convert_perl_to_r"}(@_);
 			1;
 		} and return $ret;
-		die $@ unless( $@ =~ /could not convert/ );
+		die $@ unless ref $@ && $@->isa('Statistics::NiceR::Error::Conversion::PerltoR');
 	}
-	die $@; # TODO rethrow
+	Statitics::NiceR::Error::Conversion::PerltoR->throw('No suitable conversion found');
 }
 
 

@@ -5,9 +5,10 @@ use warnings;
 use File::Basename;
 use File::Spec;
 use File::Which;
+use Statistics::NiceR::Error;
 
 sub import {
-	die "R executable not found" unless which('R');
+	Statistics::NiceR::Error::RInterpreter->throw("R executable not found") unless which('R');
 	unless( $ENV{R_HOME} ) {
 		my $Rhome = `R RHOME`;
 		chomp $Rhome;
