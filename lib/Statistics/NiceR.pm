@@ -7,13 +7,15 @@ use warnings;
 use Statistics::NiceR::Backend::EmbeddedR;
 use Statistics::NiceR::Sexp;
 use Statistics::NiceR::DataConvert;
+use Statistics::NiceR::Error;
+use Try::Tiny;
 
 =method new
 
   new()
 
 Creates a new instance of a wrapper around the R interpreter.
-  
+
    use Statistics::NiceR
    my $r = Statistics::NiceR->new();
 
@@ -48,7 +50,7 @@ sub _map_function_perl_to_r {
 sub AUTOLOAD {
 	(my $fname = our $AUTOLOAD) =~ s/^@{[__PACKAGE__]}:://;
 	my ($self, @args) = @_;
-	my $r_fname = _map_function_perl_to_r($fname); 
+	my $r_fname = _map_function_perl_to_r($fname);
 	my $function = $self->{r_interpreter}->R_get_function($r_fname);
 	my @r_args = map { [ $self->{converter}->convert_perl_to_r($_) ] } @args;
 	my $r_data = $self->{r_interpreter}->R_call_function( $function, \@r_args );
@@ -68,8 +70,10 @@ sub AUTOLOAD {
 
 =head1 SYNOPSIS
 
-=head1 CALLING R METHODS
+=head1 CALLING R FUNCTIONS
+
+
 
 =head1
 
-=cut 
+=cut
