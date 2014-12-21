@@ -8,6 +8,25 @@ use Statistics::NiceR::Backend::EmbeddedR;
 use Statistics::NiceR::Sexp;
 use Statistics::NiceR::DataConvert;
 
+=method new
+
+  new()
+
+Creates a new instance of a wrapper around the R interpreter.
+  
+   use Statistics::NiceR
+   my $r = Statistics::NiceR->new();
+
+=cut
+=method eval_parse
+
+   $eval_result = eval_parse( Str $r_code )
+
+A convenience function that allows for evaluating arbitrary R code.
+
+The return value is the last line of the code in C<$r_code>.
+
+=cut
 sub new {
 	my ($klass) = @_;
 	my $obj = bless { converter => 'Statistics::NiceR::DataConvert', r_interpreter => 'Statistics::NiceR::Backend::EmbeddedR' }, $klass;
@@ -46,3 +65,11 @@ sub AUTOLOAD {
 }
 
 1;
+
+=head1 SYNOPSIS
+
+=head1 CALLING R METHODS
+
+=head1
+
+=cut 
