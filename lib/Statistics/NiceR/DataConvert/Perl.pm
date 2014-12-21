@@ -189,7 +189,7 @@ SV* make_perl_string( SEXP r_char ) {
 	size_t i;
 	AV* l;
 	SV* sv_tmp;
-	char* s;
+	const char* s;
 	size_t s_len;
 
 	len = LENGTH(r_char);
@@ -209,7 +209,7 @@ SV* make_perl_string( SEXP r_char ) {
 			sv_tmp = newSVpv(s, s_len);
 			av_store(l, i, SvREFCNT_inc(sv_tmp));
 		}
-		return newRV_inc(l);
+		return newRV_inc((SV*)l);
 	}
 
 	return &PL_sv_undef; /* shouldn't get here */
@@ -233,6 +233,6 @@ SV* make_list( SEXP r_list ) {
 
 		av_store(l, i, SvREFCNT_inc(sv_tmp));
 	}
-	return newRV_inc(l);
+	return newRV_inc((SV*)l);
 
 }
