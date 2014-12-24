@@ -33,7 +33,7 @@ sub convert_r_to_perl_vecsxp {
 	my $names_r = $data->attrib('names');
 	if( defined $names_r ) {
 		#my $names_perl = Statistics::NiceR::DataConvert->convert_r_to_perl($names_r);
-		warn "R list has names attribute which needs to be processed";
+		#warn "R list has names attribute which needs to be processed"; # TODO
 	}
 	return [ map {
 			my $curr = $_;
