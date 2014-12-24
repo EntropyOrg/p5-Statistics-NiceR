@@ -10,6 +10,9 @@ use IPC::Cmd qw(run);
 use Config;
 use File::Glob;
 
+
+our $MYEXTLIB;
+
 sub find_R {
 	my $iswin32 = $^O eq 'MSWin32';
 
@@ -22,7 +25,6 @@ sub find_R {
 		eval {
 			require 'Win32.pm';
 			my $pf;
-			$rtools_path = File::Spec->catfile( qw(C: Rtools bin) );
 			{
 			no strict 'subs';
 			$pf = Win32::GetFolderPath( Win32::CSIDL_PROGRAM_FILES );
@@ -31,10 +33,10 @@ sub find_R {
 			my $path_glob = File::Spec->catfile( $pf, 'R', '*', 'bin',);
 			my @all_paths = File::Glob::bsd_glob( $path_glob );
 
-			@all_paths = sort { $b <=> $a } @all_paths;
+			@all_paths = sort { $b cmp $a } @all_paths;
 			$guess_path = $all_paths[0];
 		};
-		local $ENV{PATH} = "$ENV{PATH};$rtools_path;$guess_path";
+		local $ENV{PATH} = "$ENV{PATH};$guess_path";
 		$r_path = which('R');
 	}
 
@@ -51,11 +53,23 @@ sub run_R {
 	my @r_arch = qw(i386 x64); # possible architectures
 	my $arch = $is64 ? 'x64' : 'i386';
 
+	my $rtools_path = File::Spec->catfile( qw(C: Rtools bin) );
+	if( $^O eq 'MSWin32' ) {
+		$ENV{PATH} = "$ENV{PATH};$rtools_path";
+	}
 	my $r_path = find_R();
 	my @arch_args = ();
-	if( -d  File::Spec->catfile( dirname( $r_path ) , $arch ) ) {
+	my $subarch_dir = File::Spec->catfile( dirname( $r_path ) , $arch );
+	if( -d $subarch_dir ) {
 		# sub-architecture exists
 		@arch_args = ('--arch', $arch);
+		if( $^O eq 'MSWin32' and !$MYEXTLIB ) {
+			# need add the R.dll to the path and MYEXTLIB
+			$ENV{PATH} = "$ENV{PATH};$subarch_dir";
+			$MYEXTLIB = File::Spec->catfile( $subarch_dir, 'R.dll' );
+			$MYEXTLIB =~ s|Program Files|PROGRA~1|;
+			#$MYEXTLIB =~ s|\\|/|g;
+		}
 	}
 
 	my( $success, $error_message, $full_buf, $stdout_buf, $stderr_buf ) =
@@ -69,7 +83,7 @@ sub run_R {
 
 	unless( $success ) {
 		Statistics::NiceR::Error::RInterpreter
-			->throw("Unable to run R with args: @arch_args @args");
+			->throw("Unable to run R with args: @arch_args @args: @$full_buf");
 	}
 
 	return join "\n", @$stdout_buf;
@@ -88,11 +102,14 @@ sub Inline {
 	return unless $_[-1] eq 'C';
 	import();
 	my $R_inc = run_R( qw( CMD config --cppflags ) );
+	chomp $R_inc;
 	my $R_libs   = run_R( qw( CMD config --ldflags ) );
+	chomp $R_libs;
 	my $dir = File::Spec->rel2abs( dirname(__FILE__) );
 	+{
 		INC => $R_inc,
 		LIBS => $R_libs,
+		( MYEXTLIB => $MYEXTLIB )x!!$MYEXTLIB,
 		TYPEMAPS => File::Spec->catfile( $dir, 'typemap' ),
 		AUTO_INCLUDE => q{
 			#include <Rinternals.h>
