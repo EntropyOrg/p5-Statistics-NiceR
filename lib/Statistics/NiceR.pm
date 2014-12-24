@@ -2,6 +2,8 @@ package Statistics::NiceR;
 # ABSTRACT: interface to the R programming language
 =encoding UTF-8
 
+=cut
+
 use strict;
 use warnings;
 
@@ -19,7 +21,7 @@ Creates a new instance of a wrapper around the R interpreter.
 
 Example
 
-    use Statistics::NiceR
+    use Statistics::NiceR;
 
     my $r = Statistics::NiceR->new();
 
@@ -34,7 +36,7 @@ The return value is the last line of the code in C<$r_code>.
 
 Example:
 
-    use Statistics::NiceR
+    use Statistics::NiceR;
 
     my $r = Statistics::NiceR->new();
     my $dataframe = $r->eval_parse( q< iris[1:20,1:4] > );
@@ -82,7 +84,7 @@ sub AUTOLOAD {
 
 =head1 SYNOPSIS
 
-    use Statistics::NiceR
+    use Statistics::NiceR;
 
     my $r = Statistics::NiceR->new();
 
