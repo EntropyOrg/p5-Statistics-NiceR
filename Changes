@@ -1,3 +1,7 @@
+0.03 2014-12-23 23:52:09-0600
+    - try to make a more robust build, especially for testing on Windows
+    - Unix systems should work as they did before
+
 0.02 2014-12-23 18:48:48-0600
     - update examples to use new namespace
 

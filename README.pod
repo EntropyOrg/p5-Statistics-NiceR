@@ -8,7 +8,7 @@ Statistics::NiceR - interface to the R programming language
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -127,6 +127,16 @@ or to call R's C<l10n_info> function, one could run:
     # [1] FALSE
 
 =for comment TODO Need to document how to call functions with named arguments.
+
+=head1 INSTALLATION
+
+On a system with a package manager, it would be best to install the R base
+package using the package manager.
+
+=head2 Windows
+
+For Windows, both the L<R base|http://cran.r-project.org/bin/windows/base/> and
+L<Rtools|http://cran.r-project.org/bin/windows/Rtools/> are necessary.
 
 =head1 SEE ALSO
 
