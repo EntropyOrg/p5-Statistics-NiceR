@@ -1,5 +1,6 @@
 package Statistics::NiceR;
 # ABSTRACT: interface to the R programming language
+=encoding UTF-8
 
 use strict;
 use warnings;
@@ -110,14 +111,71 @@ will be addressed in future versions.
 [^2]: Such as integers, numerics, data frames, and matrices.
 
 =begin comment
+
 TODO change this wording when the Statistics::NiceR::DataConvert module is
 documented and when changing the converter behaviour is documented for
 Statistics::NiceR
+
 =end comment
 
 =head2 CALLING R FUNCTIONS
 
-R functions can be called 
+R functions can be called by using the name of the function as a method call.
+For example, to call the L<pnorm|https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Normal.html>
+function (PDF of the normal distribution), which has the R function signature
+
+    pnorm(q, mean = 0, sd = 1, lower.tail = TRUE, log.p = FALSE)
+
+one could run
+
+    use Statistics::NiceR;
+    my $r = Statistics::NiceR->new();
+
+    say $r->pnorm( 0 ) # N( μ = 0, σ² = 1) at x = 0
+    # 0.5
+
+    say $r->pnorm( 5, 1, 2 ) # N( μ = 1, σ² = 2) at x = 5
+    # 0.977249868051821
+
+Since R can have identifiers that contain a period (".") in their name and Perl
+can not, C<Statistics::NiceR> maps
+
+=over 8
+
+=item a single underscore in the Perl function name ("_") to a period in the R function name (".")
+
+=item two consecutive underscores in the Perl function name ("__") to a single underscore in the R function name ("_").
+
+=back
+
+So in order to call R's C<as.Date> function, one could run:
+
+    use Statistics::NiceR;
+    my $r = Statistics::NiceR->new();
+
+    say $r->as_Date( "02/27/92", "%m/%d/%y" ); # one underscore
+    # [1] "1992-02-27"
+
+or to call R's C<l10n_info> function, one could run:
+
+    use Statistics::NiceR;
+    my $r = Statistics::NiceR->new();
+
+    say $r->l10n__info(); # two underscores
+    # $MBCS
+    # [1] TRUE
+    #
+    # $`UTF-8`
+    # [1] TRUE
+    #
+    # $`Latin-1`
+    # [1] FALSE
+
+=begin comment
+
+TODO Need to document how to call functions with named arguments.
+
+=end comment
 
 =head1 SEE ALSO
 
