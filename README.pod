@@ -69,6 +69,15 @@ Example:
     my $r = Statistics::NiceR->new();
     my $dataframe = $r->eval_parse( q< iris[1:20,1:4] > );
 
+use strict;
+use warnings;
+
+use Statistics::NiceR::Backend::EmbeddedR;
+use Statistics::NiceR::Sexp;
+use Statistics::NiceR::DataConvert;
+use Statistics::NiceR::Error;
+use Try::Tiny;
+
 =for comment TODO change this wording when the Statistics::NiceR::DataConvert module is
 documented and when changing the converter behaviour is documented for
 Statistics::NiceR
@@ -97,9 +106,9 @@ can not, C<Statistics::NiceR> maps
 
 =over 4
 
-=item a single underscore in the Perl function name ("_") to a period in the R function name (".")
+=item * a single underscore in the Perl function name ("_") to a period in the R function name (".")
 
-=item two consecutive underscores in the Perl function name ("__") to a single underscore in the R function name ("_").
+=item * two consecutive underscores in the Perl function name ("__") to a single underscore in the R function name ("_").
 
 =back
 
@@ -119,10 +128,10 @@ or to call R's C<l10n_info> function, one could run:
     say $r->l10n__info(); # two underscores
     # $MBCS
     # [1] TRUE
-    # 
+    #
     # $`UTF-8`
     # [1] TRUE
-    # 
+    #
     # $`Latin-1`
     # [1] FALSE
 
@@ -132,11 +141,11 @@ or to call R's C<l10n_info> function, one could run:
 
 =over 4
 
-=item L<The R Project for Statistical Computing|http://www.r-project.org/>
+=item * L<The R Project for Statistical Computing|http://www.r-project.org/>
 
-=item Browse and download additional R packages: L<The Comprehensive R Archive Network|http://cran.r-project.org/>
+=item * Browse and download additional R packages: L<The Comprehensive R Archive Network|http://cran.r-project.org/>
 
-=item L<R Tutorial: R Introduction|http://www.r-tutor.com/r-introduction>
+=item * L<R Tutorial: R Introduction|http://www.r-tutor.com/r-introduction>
 
 =back
 
@@ -144,9 +153,9 @@ For developers:
 
 =over 4
 
-=item L<Writing R Extensions|http://cran.r-project.org/doc/manuals/r-release/R-exts.html>
+=item * L<Writing R Extensions|http://cran.r-project.org/doc/manuals/r-release/R-exts.html>
 
-=item L<Advanced R by Hadley Wickham: R’s C interface|http://adv-r.had.co.nz/C-interface.html>
+=item * L<Advanced R by Hadley Wickham: R’s C interface|http://adv-r.had.co.nz/C-interface.html>
 
 =back
 
