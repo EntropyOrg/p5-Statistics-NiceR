@@ -180,6 +180,16 @@ TODO Need to document how to call functions with named arguments.
 
 =end comment
 
+=head1 INSTALLATION
+
+On a system with a package manager, it would be best to install the R base
+package using the package manager.
+
+=head2 Windows
+
+For Windows, both the L<R base|http://cran.r-project.org/bin/windows/base/> and
+L<Rtools|http://cran.r-project.org/bin/windows/Rtools/> are necessary.
+
 =head1 SEE ALSO
 
 =over 4
