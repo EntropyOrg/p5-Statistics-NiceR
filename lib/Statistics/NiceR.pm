@@ -140,11 +140,11 @@ one could run
 Since R can have identifiers that contain a period (".") in their name and Perl
 can not, C<Statistics::NiceR> maps
 
-=over 8
+=over 4
 
-=item a single underscore in the Perl function name ("_") to a period in the R function name (".")
+=item * a single underscore in the Perl function name ("_") to a period in the R function name (".")
 
-=item two consecutive underscores in the Perl function name ("__") to a single underscore in the R function name ("_").
+=item * two consecutive underscores in the Perl function name ("__") to a single underscore in the R function name ("_").
 
 =back
 
@@ -181,11 +181,11 @@ TODO Need to document how to call functions with named arguments.
 
 =over 4
 
-=item L<The R Project for Statistical Computing|http://www.r-project.org/>
+=item * L<The R Project for Statistical Computing|http://www.r-project.org/>
 
-=item Browse and download additional R packages: L<The Comprehensive R Archive Network|http://cran.r-project.org/>
+=item * Browse and download additional R packages: L<The Comprehensive R Archive Network|http://cran.r-project.org/>
 
-=item L<R Tutorial: R Introduction|http://www.r-tutor.com/r-introduction>
+=item * L<R Tutorial: R Introduction|http://www.r-tutor.com/r-introduction>
 
 =back
 
@@ -193,9 +193,9 @@ For developers:
 
 =over 4
 
-=item L<Writing R Extensions|http://cran.r-project.org/doc/manuals/r-release/R-exts.html>
+=item * L<Writing R Extensions|http://cran.r-project.org/doc/manuals/r-release/R-exts.html>
 
-=item L<Advanced R by Hadley Wickham: R’s C interface|http://adv-r.had.co.nz/C-interface.html>
+=item * L<Advanced R by Hadley Wickham: R’s C interface|http://adv-r.had.co.nz/C-interface.html>
 
 =back
 
