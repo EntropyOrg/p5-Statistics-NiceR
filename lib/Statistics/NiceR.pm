@@ -1,5 +1,6 @@
 package Statistics::NiceR;
 # ABSTRACT: interface to the R programming language
+
 =encoding UTF-8
 
 =cut
