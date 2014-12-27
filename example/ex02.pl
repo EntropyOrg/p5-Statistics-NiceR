@@ -5,8 +5,9 @@ use strict;
 use warnings;
 
 use Statistics::NiceR;
-use Data::Frame::Rlike;
+use Data::Frame;
 
+Moo::Role->apply_roles_to_package( q|Data::Frame|, qw(Data::Frame::Role::Rlike) );
 my $r = Statistics::NiceR->new;
 
 
