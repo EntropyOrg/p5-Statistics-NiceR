@@ -65,7 +65,6 @@ SEXP make_r_array( pdl* p, int flat, int matrix ) {
 	r_type = PDL_to_R_type( p->datatype );
 
 	PROTECT( r_dims = allocVector( INTSXP, ndims ) );
-
 	if( matrix ) {
 		/* TODO check if ndims == 2 */
 		R_PreserveObject( r_array = allocMatrix( r_type, p->dims[0], p->dims[1] ) );
@@ -96,8 +95,7 @@ SEXP make_r_array( pdl* p, int flat, int matrix ) {
 			dimgets( r_array, r_dims ); /* set dimensions */
 		}
 	}
-
-	/* TODO NOTE: on DESTROY, call R_ReleaseObject() */
+	UNPROTECT(1); /* r_dims */
 
 	/* TODO support more types */
 	switch(r_type) {
@@ -121,8 +119,6 @@ for my $type (qw(PDL_D PDL_L)) {
 }
 }}}
 	}
-
-	UNPROTECT(1); /* r_dims */
 
 	return r_array;
 }

@@ -140,11 +140,11 @@ SEXP make_vecsxp( SV* sexp_sv ) {
 		sexp_av = (AV*) SvRV(sexp_sv);
 		len = av_len(sexp_av) + 1;
 
-		PROTECT( vec = allocVector( VECSXP, len ) );
+		R_PreserveObject( vec = allocVector( VECSXP, len ) );
 		for( i = 0; i < len; i++ ) {
 			sv_sexp_elt = *( av_fetch(sexp_av, i, 0) ); /* get SV out of array */
 			ptrsexp_elt = SvIV( (SV*) SvRV(sv_sexp_elt) ); /* get integer pointer out of SV */
-			PROTECT( r_sexp_elt = INT2PTR(SEXP, ptrsexp_elt ) ); /* cast the integer to a pointer */
+			r_sexp_elt = INT2PTR(SEXP, ptrsexp_elt ); /* cast the integer to a pointer */
 			SET_VECTOR_ELT( vec, i, r_sexp_elt );
 		}
 	}
@@ -167,18 +167,18 @@ SEXP make_r_string( SV* p_char ) {
 		p_av = (AV*) SvRV(p_char);
 		len = av_len(p_av) + 1;
 
-		PROTECT( r_char = allocVector( STRSXP, len ) );
+		R_PreserveObject( r_char = allocVector( STRSXP, len ) );
 		for( i = 0; i < len; i++ ) {
 			sv_elt = *( av_fetch(p_av, i, 0) ); /* get SV out of array */
 			char_elt = SvPV_nolen( sv_elt ); /* get string out of SV */
-			PROTECT( r_elt = mkChar(char_elt) ); /* turn string into R CHARSXP */
+			r_elt = mkChar(char_elt); /* turn string into R CHARSXP */
 			SET_STRING_ELT(r_char, i, r_elt );
 		}
 	} else {
 		/* TODO make sure that this is an SVt_PV */
-		PROTECT( r_char = allocVector( STRSXP, 1 ) );
+		R_PreserveObject( r_char = allocVector( STRSXP, 1 ) );
 		char_elt = SvPV_nolen( p_char );
-		PROTECT( r_elt = mkChar(char_elt) );
+		r_elt = mkChar(char_elt);
 		SET_STRING_ELT(r_char, i, r_elt );
 	}
 

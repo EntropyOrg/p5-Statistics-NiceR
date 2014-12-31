@@ -66,13 +66,15 @@ SEXP eval( SV* self, SV* eval_sv ) {
 		}
 	}
 	UNPROTECT(2); /* tmp, eval_expr_v */
-	PROTECT(ret);
 
+	R_PreserveObject(ret);
 	return ret;
 }
 
 SEXP R_get_function(SV* self, char* fname) {
-	return Rf_install(fname);
+	SEXP f;
+	R_PreserveObject(f = Rf_install(fname));
+	return f;
 }
 
 
@@ -130,5 +132,7 @@ SEXP R_call_function(SV* self, SEXP function, SV* args_ref) {
 		/* TODO error checking */
 		return R_NilValue;
 	}
-	PROTECT(ret);
+
+	R_PreserveObject(ret);
+	return ret;
 }

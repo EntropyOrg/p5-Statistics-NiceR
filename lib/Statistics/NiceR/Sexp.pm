@@ -28,6 +28,11 @@ sub attrib {
 	return $self->get_attrib($attrib);
 }
 
+sub DESTROY {
+	my ($self) = @_;
+	$self->_destroy_sexp;
+}
+
 1;
 
 __DATA__
@@ -92,25 +97,13 @@ int op_equal_all(SEXP self, SEXP other) {
 	return result;
 }
 
-SEXP eval_lang2( SEXP self, char* func_name ) {
-	SEXP r_func_name, result;
-
-	PROTECT( r_func_name = install(func_name) );
-
-	PROTECT( result = eval(lang2(r_func_name, self), R_GlobalEnv) ); /* TODO UNPROTECT */
-
-	UNPROTECT( 1 ); /* r_func_name */
-
-	return result;
-}
-
 SEXP get_attrib( SEXP self, char* name ) {
 	SEXP r_name;
 	SEXP attr;
 
 	PROTECT( r_name = mkString(name) );
 
-	PROTECT( attr = getAttrib(self, r_name) ); /* UNPROTECT at DESTROY */
+	R_PreserveObject(attr = getAttrib(self, r_name));
 
 	UNPROTECT(1); /* r_name */
 
@@ -156,4 +149,8 @@ char* r_typeof( SEXP self ) {
 char* _string( SEXP self ) {
 	Rf_PrintValue( self );
 	return ""; /* TODO use the R output hooks to redirect print messages to string, c.f. R_INTERFACE_PTRS, ptr_R_ */
+}
+
+void _destroy_sexp( SEXP self ) {
+	R_ReleaseObject( self );
 }
