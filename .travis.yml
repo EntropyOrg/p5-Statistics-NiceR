@@ -1,0 +1,40 @@
+language: perl
+perl:
+  - "5.10"
+  - "5.12"
+  - "5.14"
+  - "5.16"
+  - "5.18"
+  - "5.20"
+  - "blead"
+sudo: true
+matrix:
+  include:
+    - perl: "5.20"
+      env: COVERAGE=1
+  allow_failures:
+    - perl: blead
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install gfortran build-essential libx11-dev pgplot5 libplplot-dev libgd2-xpm-dev libhdf4-alt-dev libproj-dev libvpx-dev libxpm-dev proj-bin libcfitsio3-dev libreadline-dev # PDL deps
+  - sudo apt-get install r-base-core # R interpreter and headers
+  - git clone git://github.com/travis-perl/helpers ~/travis-perl-helpers
+  - source ~/travis-perl-helpers/init
+  - build-perl
+  - perl -V
+  - build-dist
+  - cd $BUILD_DIR             # $BUILD_DIR is set by the build-dist command
+install:
+  - cpan-install --deps       # installs prereqs, including recommends
+  - cpan-install --coverage   # installs converage prereqs, if enabled
+  - make
+before_script:
+  - coverage-setup
+script:
+  - prove -b -v $(test-files)
+after_success:
+  - coverage-report
+branches:
+  except:
+    - /^wip\//
+    - /^blocked/
