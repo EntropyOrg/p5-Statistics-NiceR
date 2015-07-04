@@ -118,7 +118,7 @@ sub convert_perl_to_r_integer {
 sub convert_perl_to_r_float {
 	my ($self, $data) = @_;
 	# XXX using PDL
-	Statistics::NiceR::DataConvert::PDL->convert_perl_to_r( PDL::core::double($data) );
+	Statistics::NiceR::DataConvert::PDL->convert_perl_to_r( PDL::Core::double($data) );
 }
 
 
