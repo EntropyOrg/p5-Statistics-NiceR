@@ -81,6 +81,12 @@ sub AUTOLOAD {
 	return $perl_data;
 }
 
+sub DESTROY {
+	my $self = shift;
+	
+	return if ${^GLOBAL_PHASE} eq 'DESTRUCT';
+}
+
 1;
 
 =head1 SYNOPSIS
