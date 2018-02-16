@@ -139,7 +139,11 @@ sub Inline {
 	my $R_inc = run_R( qw( CMD config --cppflags ) );
 	chomp $R_inc;
 	my $R_libs   = run_R( qw( CMD config --ldflags ) );
-	chomp $R_libs;
+	$R_libs .= run_R( qw(CMD config BLAS_LIBS) );
+	$R_libs .= run_R( qw(CMD config LAPACK_LIBS) );
+        chomp $R_libs;
+	$R_libs =~ s{\Q$/\E}{ }g;
+
 	my $dir = File::Spec->rel2abs( dirname(__FILE__) );
 	+{
 		INC => $R_inc,
